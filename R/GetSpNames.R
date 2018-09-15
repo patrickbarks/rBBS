@@ -1,7 +1,8 @@
-#' Read BBS meta-data
+#' Get taxonomic data from North American Breeding Bird Survey (BBS)
 #' 
-#' Read in list of species names, from SpeciesList.txt, and then extract list of
-#' where the data is kept
+#' Get data frame with species names and associated taxonomic information from
+#' the North American Breeding Bird Survey (BBS). This data comes from the BBS
+#' file 'SpeciesList.txt'.
 #'
 #' @param bbs_dir Directory from which to get data. Defaults to the USGS FTP
 #'   directory for the most recent BBS release. May alternatively be a path to a
@@ -27,29 +28,17 @@
 #' @examples
 #' Species <- GetSpNames()
 #' 
-#' @importFrom utils read.fwf
 #' @export GetSpNames
 GetSpNames <- function(bbs_dir = NULL) {
 
   if (is.null(bbs_dir)) {
     bbs_dir <- bbs_ftp()
   }
-    
-  File <- paste0(bbs_dir, "SpeciesList.txt")
   
-  All <- scan(File, what="character", sep="\n", encoding="latin1", quiet = TRUE)
+  txt_file <- paste0(bbs_dir, "SpeciesList.txt")
   
-  Delimiter <- grep("^-", All)
-  
-  ColNames <- strsplit(All[Delimiter-1], split='[[:blank:]]+')[[1]]
-  Widths <- nchar(strsplit(All[Delimiter], split='[[:blank:]]+')[[1]]) + 1
-  
-  df <- read.fwf(File, skip = Delimiter, widths = Widths,
-                 fileEncoding = 'Latin1', strip.white = TRUE,
-                 stringsAsFactors = FALSE, col.names = ColNames)
-  
+  df <- read_bbs_txt(txt_file)
   df$AOU <- formatC(df$AOU, width = 5, flag = '0')
   
   return(df)
 }
-

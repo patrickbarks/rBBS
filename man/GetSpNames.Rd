@@ -2,7 +2,7 @@
 % Please edit documentation in R/GetSpNames.R
 \name{GetSpNames}
 \alias{GetSpNames}
-\title{Read BBS meta-data}
+\title{Get taxonomic data from North American Breeding Bird Survey (BBS)}
 \usage{
 GetSpNames(bbs_dir = NULL)
 }
@@ -24,8 +24,9 @@ local directory, or ftp address for an older BBS release.}
   \item{Species}{Taxonomic species name}
 }
 \description{
-Read in list of species names, from SpeciesList.txt, and then extract list of
-where the data is kept
+Get data frame with species names and associated taxonomic information from
+the North American Breeding Bird Survey (BBS). This data comes from the BBS
+file 'SpeciesList.txt'.
 }
 \examples{
 Species <- GetSpNames()
