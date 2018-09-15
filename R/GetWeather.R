@@ -3,8 +3,9 @@
 #' Reads Weather meta-data in BBS, from Weather.zip. Contains other meta-data
 #' too, so is useful elsewhere
 #' 
-#' @param Dir Directory to get data. Defaults to
-#'   ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/, the USGS FTP server
+#' @param bbs_dir Directory from which to get data. Defaults to the USGS FTP
+#'   directory for the most recent BBS release. May alternatively be a path to a
+#'   local directory, or ftp address for an older BBS release.
 #'
 #' @return
 #' Data frame with these columns:
@@ -43,8 +44,7 @@
 #'   otherwise 0.}
 #'   \item{routeID}{unique route ID}
 #' 
-#' @details Documented here:
-#'   ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/WeatherInf.txt
+#' @details See 'bbs_dir/WeatherInf.txt' for documentation.
 #' @author Bob O'Hara
 #' @references Sauer, J. R., J. E. Hines, J. E. Fallon, K. L. Pardieck, D. J.
 #'   Ziolkowski, Jr., and W. A. Link. 2014. The North American Breeding Bird
@@ -55,8 +55,8 @@
 #' Weather <- GetWeather()
 #' 
 #' @export GetWeather
-GetWeather <- function(Dir="ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/") {
-  weather=GetUnzip(ZipName=paste0(Dir, "Weather.zip"), FileName="weather.csv")
+GetWeather <- function(bbs_dir = NULL) {
+  weather=GetUnzip(ZipName=paste0(bbs_dir, "Weather.zip"), FileName="weather.csv")
   weather$routeID=paste(weather$statenum, weather$Route)
   weather
 }

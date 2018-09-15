@@ -4,12 +4,12 @@
 \alias{GetWeather}
 \title{Read in weather and other meta-data}
 \usage{
-
-  GetWeather(Dir = "ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/")
+GetWeather(bbs_dir = NULL)
 }
 \arguments{
-\item{Dir}{Directory to get data. Defaults to
-ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/, the USGS FTP server}
+\item{bbs_dir}{Directory from which to get data. Defaults to the USGS FTP
+directory for the most recent BBS release. May alternatively be a path to a
+local directory, or ftp address for an older BBS release.}
 }
 \value{
 Data frame with these columns:
@@ -53,8 +53,7 @@ Reads Weather meta-data in BBS, from Weather.zip. Contains other meta-data
 too, so is useful elsewhere
 }
 \details{
-Documented here:
-  ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/WeatherInf.txt
+See 'bbs_dir/WeatherInf.txt' for documentation.
 }
 \examples{
 Weather <- GetWeather()

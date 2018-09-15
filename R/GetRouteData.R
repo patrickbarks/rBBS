@@ -3,6 +3,9 @@
 #' This function imports the 10 or 50 stop species data from either the USGS BBS
 #' ftp server or another repository
 #' 
+#' @param bbs_dir Directory from which to get data. Defaults to the USGS FTP
+#'   directory for the most recent BBS release. May alternatively be a path to a
+#'   local directory, or ftp address for an older BBS release.
 #' @param AOU Vector of species' AOU code
 #' @param countrynum Vector of country codes, either 124 (Canada), 484 (Mexico),
 #'   or 840 (USA).
@@ -19,8 +22,6 @@
 #'   observed.
 #' @param TenStops Logical: if TRUE (the default) get 10-stop data. If false,
 #'   get 50-stop data.
-#' @param Dir Directory to get data. Defaults to
-#'   ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/, the USGS FTP server
 #' 
 #' @return Data frame with the following columns for all data:
 #'   \item{countrynum}{The three digit identification code for country. See
@@ -76,16 +77,20 @@
 #' @importFrom RCurl getURL
 #' @importFrom plyr ldply
 #' @export GetRouteData
-GetRouteData <- function(AOU=NULL, countrynum=NULL, states=NULL, year, weather=NULL, routes=NULL, 
-                      Zeroes=TRUE, TenStops = TRUE, 
-                      Dir="ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/") {
+GetRouteData <- function(bbs_dir = NULL, AOU=NULL, countrynum=NULL, states=NULL,
+                         year, weather=NULL, routes=NULL, Zeroes=TRUE,
+                         TenStops = TRUE) {
+  
+  if (is.null(bbs_dir)) {
+    bbs_dir <- bbs_ftp()
+  }
   
   if(TenStops) {
-    DirData <- paste0(Dir, "States/")
+    DirData <- paste0(bbs_dir, "States/")
     CountString <- "^count"
   } else {
     if(any(year<1997)) stop("Data only available from 1997: pre-1997 data not integrated into this function for 50 stop data (yet)")
-    DirData <- paste0(Dir, "50-StopData/1997ToPresent_SurveyWide/")
+    DirData <- paste0(bbs_dir, "50-StopData/1997ToPresent_SurveyWide/")
     CountString <- "^stop"
   }
   if(!is.null(countrynum) & any(!(countrynum%in%c(124, 484, 840)))) stop("countrynum should be either 124 (Canada), 484 (Mexico), or 840 (USA)")
@@ -136,13 +141,13 @@ GetRouteData <- function(AOU=NULL, countrynum=NULL, states=NULL, year, weather=N
   } else {
     Data <- ldply(Data.lst)
 # Get route data for all routes, and annual data
-    if(is.null(weather)) weather <-GetWeather(Dir)
+    if(is.null(weather)) weather <-GetWeather(bbs_dir)
     if(is.null(year)) {  UseYear <- TRUE  } else {  UseYear <- weather$Year%in%year  }
     if(is.null(countrynum)) {  UseCountry <- TRUE  } else {  UseCountry <- weather$countrynum%in%countrynum  }
     if(is.null(states)) {  UseState <- TRUE  } else {  UseState <- weather$statenum%in%states  }
     UseWeather <- UseYear & UseCountry & UseState
     
-    if(is.null(routes)) routes <- GetRoutes(Dir)
+    if(is.null(routes)) routes <- GetRoutes(bbs_dir)
     if(is.null(countrynum)) {  UseCountry <- TRUE  } else {  UseCountry <- routes$countrynum%in%countrynum  }
     if(is.null(states)) {  UseState <- TRUE  } else {  UseState <- routes$statenum%in%states  }
     UseRoutes <- UseCountry & UseState

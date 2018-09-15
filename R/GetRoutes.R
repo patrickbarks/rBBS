@@ -2,8 +2,9 @@
 #' 
 #' Gets meta-data about BBS routes
 #'
-#' @param Dir Directory to get data. Defaults to
-#'   ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/, the USGS FTP server
+#' @param bbs_dir Directory from which to get data. Defaults to the USGS FTP
+#'   directory for the most recent BBS release. May alternatively be a path to a
+#'   local directory, or ftp address for an older BBS release.
 #'
 #' @return
 #' Data frame with these columns:
@@ -23,9 +24,7 @@
 #'   \item{routeID}{Route ID (mainly for internal use, to make sure routes are
 #'   unique)}
 #' 
-#' @details See
-#'   ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/RouteInf.txt for
-#'   documentation.
+#' @details See 'bbs_dir/RouteInf.txt' for documentation.
 #' @author Bob O'Hara
 #' @references Sauer, J. R., J. E. Hines, J. E. Fallon, K. L. Pardieck, D. J.
 #'   Ziolkowski, Jr., and W. A. Link. 2014. The North American Breeding Bird
@@ -36,8 +35,13 @@
 #' Routes <- GetRoutes()
 #' 
 #' @export GetRoutes
-GetRoutes <- function(Dir="ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/") {
-  routes=GetUnzip(ZipName=paste0(Dir, "routes.zip"), FileName="routes.csv")
+GetRoutes <- function(bbs_dir = NULL) {
+  
+  if (is.null(bbs_dir)) {
+    bbs_dir <- bbs_ftp()
+  }
+  
+  routes=GetUnzip(ZipName=paste0(bbs_dir, "routes.zip"), FileName="routes.csv")
   routes$routeID=paste(routes$statenum, routes$Route)
   routes
 }

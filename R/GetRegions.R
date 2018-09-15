@@ -3,8 +3,9 @@
 #' Read in list of states/provinces/territories, and also names of zip files
 #' where the 10 stop data is kept.
 #'
-#' @param Dir Directory to get data. Defaults to
-#'   ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/, the USGS FTP server
+#' @param bbs_dir Directory from which to get data. Defaults to the USGS FTP
+#'   directory for the most recent BBS release. May alternatively be a path to a
+#'   local directory, or ftp address for an older BBS release.
 #' @param ZipFiles Logical: should the names of the zip files for the 10- and
 #'   50-stop data be added? Defaults to FALSE.
 #'
@@ -30,10 +31,13 @@
 #' Regions <- GetRegions()
 #' 
 #' @export GetRegions
-GetRegions <- function(Dir = 
-                    "ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/", 
-                    ZipFiles = FALSE) {
-  File <- paste0(Dir, "RegionCodes.txt")
+GetRegions <- function(bbs_dir = NULL, ZipFiles = FALSE) {
+  
+  if (is.null(bbs_dir)) {
+    bbs_dir <- bbs_ftp()
+  }
+  
+  File <- paste0(bbs_dir, "RegionCodes.txt")
   CountryWidths <- c(unlist(read.table(File, skip=3, nrows=1, 
                                        stringsAsFactors=F)))
   # read in country metadata: use a connection to pass the encoding correctly
@@ -62,7 +66,7 @@ GetRegions <- function(Dir =
 
   # Get zip file names
   if(ZipFiles) {
-    readme.all <- scan(paste0(Dir, "README.txt"), sep="\n", what=character(), 
+    readme.all <- scan(paste0(bbs_dir, "README.txt"), sep="\n", what=character(), 
                        blank.lines.skip = FALSE, fileEncoding="Latin1")
     readme.all <- gsub("\t","",readme.all)
     PrecedingLine <- grep("States Directory:", readme.all)
@@ -87,7 +91,7 @@ GetRegions <- function(Dir =
     }, FUN.VALUE = "character", zipf=ZipF)
 
     Files50stop <- lapply(1:10, function(ind) {
-      zipf <- paste0(Dir, "/50-StopData/1997ToPresent_SurveyWide/Fifty", 
+      zipf <- paste0(bbs_dir, "/50-StopData/1997ToPresent_SurveyWide/Fifty", 
                      ind, ".zip")
       dat <- GetUnzip(zipf, paste0("fifty", ind, ".csv"))
       res <- unique(dat[,c("countrynum", "statenum")])

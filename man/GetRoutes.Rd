@@ -4,11 +4,12 @@
 \alias{GetRoutes}
 \title{Get meta-data about BBS routes}
 \usage{
-GetRoutes(Dir = "ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/")
+GetRoutes(bbs_dir = NULL)
 }
 \arguments{
-\item{Dir}{Directory to get data. Defaults to
-ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/, the USGS FTP server}
+\item{bbs_dir}{Directory from which to get data. Defaults to the USGS FTP
+directory for the most recent BBS release. May alternatively be a path to a
+local directory, or ftp address for an older BBS release.}
 }
 \value{
 Data frame with these columns:
@@ -32,9 +33,7 @@ Data frame with these columns:
 Gets meta-data about BBS routes
 }
 \details{
-See
-  ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/RouteInf.txt for
-  documentation.
+See 'bbs_dir/RouteInf.txt' for documentation.
 }
 \examples{
 Routes <- GetRoutes()

@@ -4,11 +4,15 @@
 \alias{GetRouteData}
 \title{Function to query 10 or 50 stop data for species, year, and states}
 \usage{
-GetRouteData(AOU = NULL, countrynum = NULL, states = NULL, year,
-  weather = NULL, routes = NULL, Zeroes = TRUE, TenStops = TRUE,
-  Dir = "ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/")
+GetRouteData(bbs_dir = NULL, AOU = NULL, countrynum = NULL,
+  states = NULL, year, weather = NULL, routes = NULL,
+  Zeroes = TRUE, TenStops = TRUE)
 }
 \arguments{
+\item{bbs_dir}{Directory from which to get data. Defaults to the USGS FTP
+directory for the most recent BBS release. May alternatively be a path to a
+local directory, or ftp address for an older BBS release.}
+
 \item{AOU}{Vector of species' AOU code}
 
 \item{countrynum}{Vector of country codes, either 124 (Canada), 484 (Mexico),
@@ -32,9 +36,6 @@ observed.}
 
 \item{TenStops}{Logical: if TRUE (the default) get 10-stop data. If false,
 get 50-stop data.}
-
-\item{Dir}{Directory to get data. Defaults to
-ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/, the USGS FTP server}
 }
 \value{
 Data frame with the following columns for all data:

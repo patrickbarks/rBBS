@@ -4,12 +4,12 @@
 \alias{GetSpNames}
 \title{Read BBS meta-data}
 \usage{
-
-  GetSpNames(Dir = "ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/")
+GetSpNames(bbs_dir = NULL)
 }
 \arguments{
-\item{Dir}{Directory to get data. Defaults to
-ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/, the USGS FTP server}
+\item{bbs_dir}{Directory from which to get data. Defaults to the USGS FTP
+directory for the most recent BBS release. May alternatively be a path to a
+local directory, or ftp address for an older BBS release.}
 }
 \value{
 Data frame with these columns:
