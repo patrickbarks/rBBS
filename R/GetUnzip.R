@@ -6,7 +6,8 @@
 #' @param ZipName name of zipped archive
 #' @param FileName name of file in zipped archive
 #'
-#' @return A data frame (or whatever else read.csv wants to give)
+#' @return
+#' A \code{data.frame} returned by \code{read.csv}
 #' 
 #' @author Bob O'Hara
 #' @references Sauer, J. R., J. E. Hines, J. E. Fallon, K. L. Pardieck, D. J.

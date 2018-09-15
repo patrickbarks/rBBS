@@ -12,7 +12,7 @@ GetUnzip(ZipName, FileName)
 \item{FileName}{name of file in zipped archive}
 }
 \value{
-A data frame (or whatever else read.csv wants to give)
+A \code{data.frame} returned by \code{read.csv}
 }
 \description{
 Code adapted from

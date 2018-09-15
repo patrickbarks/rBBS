@@ -8,8 +8,9 @@
 #'   local directory, or ftp address for an older BBS release.
 #' @param ZipFiles Logical: should the names of the zip files for the 10- and
 #'   50-stop data be added? Defaults to FALSE.
-#'
-#' @return Data frame with these columns:
+#' 
+#' @return
+#' \code{data.frame} with the following columns:
 #'   \item{countrynum}{Country code}
 #'   \item{RegionCode}{Region code}
 #'   \item{State/Prov/TerrName}{Name of (US) state, (Canadian) province or

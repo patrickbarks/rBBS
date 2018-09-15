@@ -23,7 +23,8 @@
 #' @param TenStops Logical: if TRUE (the default) get 10-stop data. If false,
 #'   get 50-stop data.
 #' 
-#' @return Data frame with the following columns for all data:
+#' @return
+#' \code{data.frame} with the following columns:
 #'   \item{countrynum}{The three digit identification code for country. See
 #'   RegionCodes.txt file for key.}
 #'   \item{statenum}{The two digit numerical code that identifies the state,

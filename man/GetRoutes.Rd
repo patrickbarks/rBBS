@@ -12,7 +12,7 @@ directory for the most recent BBS release. May alternatively be a path to a
 local directory, or ftp address for an older BBS release.}
 }
 \value{
-Data frame with these columns:
+\code{data.frame} with the following columns:
   \item{countrynum}{Integer code for country: 124 (Canada), 484 (Mexico), or
   840 (USA)}
   \item{statenum}{Integer code for state}

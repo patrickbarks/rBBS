@@ -38,7 +38,7 @@ observed.}
 get 50-stop data.}
 }
 \value{
-Data frame with the following columns for all data:
+\code{data.frame} with the following columns:
   \item{countrynum}{The three digit identification code for country. See
   RegionCodes.txt file for key.}
   \item{statenum}{The two digit numerical code that identifies the state,

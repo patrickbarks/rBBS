@@ -8,7 +8,7 @@
 #'   local directory, or ftp address for an older BBS release.
 #'
 #' @return
-#' Data frame with these columns:
+#' \code{data.frame} with the following columns:
 #'   \item{CountryNum}{Three digit code that identifies country: 124 (Canada),
 #'   484 (Mexico), or 840 (USA)}
 #'   \item{StateNumber}{Two digit numerical code that identifies the state,

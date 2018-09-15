@@ -15,7 +15,7 @@ local directory, or ftp address for an older BBS release.}
 50-stop data be added? Defaults to FALSE.}
 }
 \value{
-Data frame with these columns:
+\code{data.frame} with the following columns:
   \item{countrynum}{Country code}
   \item{RegionCode}{Region code}
   \item{State/Prov/TerrName}{Name of (US) state, (Canadian) province or
