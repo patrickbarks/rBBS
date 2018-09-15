@@ -8,7 +8,7 @@ bbs_ftp <- function() {
 read_bbs_txt <- function(txt_file) {
   
   # if txt_file path ftp or http, download
-  if (grepl('ftp:|http:|https:', txt_file)) {
+  if (grepl('^ftp:|^http:|^https:', txt_file)) {
     temp <- tempfile()
     download.file(txt_file, temp, quiet = TRUE)
   } else {
