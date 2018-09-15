@@ -1,4 +1,4 @@
-#' Get taxonomic data from North American Breeding Bird Survey (BBS)
+#' Get taxonomic data from North American Breeding Bird Survey
 #' 
 #' Get data frame with species names and associated taxonomic information from
 #' the North American Breeding Bird Survey (BBS). This data comes from the BBS
@@ -35,9 +35,7 @@ GetSpNames <- function(bbs_dir = NULL) {
     bbs_dir <- bbs_ftp()
   }
   
-  txt_file <- paste0(bbs_dir, "SpeciesList.txt")
-  
-  df <- read_bbs_txt(txt_file)
+  df <- read_bbs_txt(txt_file = paste0(bbs_dir, "SpeciesList.txt"))
   df$AOU <- formatC(df$AOU, width = 5, flag = '0')
   
   return(df)

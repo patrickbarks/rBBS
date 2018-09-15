@@ -2,7 +2,7 @@
 % Please edit documentation in R/GetSpNames.R
 \name{GetSpNames}
 \alias{GetSpNames}
-\title{Get taxonomic data from North American Breeding Bird Survey (BBS)}
+\title{Get taxonomic data from North American Breeding Bird Survey}
 \usage{
 GetSpNames(bbs_dir = NULL)
 }
