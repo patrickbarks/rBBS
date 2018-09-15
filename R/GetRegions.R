@@ -1,4 +1,34 @@
-# Read in list of regions (State/Prov/TerrName), from RegionCodes.txt, and then extract list of where the 10-stop data is kept
+#' Read BBS meta-data
+#'
+#' Read in list of states/provinces/territories, and also names of zip files
+#' where the 10 stop data is kept.
+#'
+#' @param Dir Directory to get data. Defaults to
+#'   ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/, the USGS FTP server
+#' @param ZipFiles Logical: should the names of the zip files for the 10- and
+#'   50-stop data be added? Defaults to FALSE.
+#'
+#' @return Data frame with these columns:
+#'   \item{countrynum}{Country code}
+#'   \item{RegionCode}{Region code}
+#'   \item{State/Prov/TerrName}{Name of (US) state, (Canadian) province or
+#'   (Mexican) territory}
+#'   \item{CountryName}{Name of country}
+#'   \item{FileName10stop}{Name of zip file with 10 stop data}
+#'   \item{FileName50stop}{Name of zip file with 50 stop data}
+#' 
+#' @details This is meta-data collated from the full database. Nore that not all
+#'   regions have a zip file: in particular, there is no Mexican data, or data
+#'   from Puerto Rico or Washington D.C.
+#' @author Bob O'Hara
+#' @references Sauer, J. R., J. E. Hines, J. E. Fallon, K. L. Pardieck, D. J.
+#'   Ziolkowski, Jr., and W. A. Link. 2014. The North American Breeding Bird
+#'   Survey, Results and Analysis 1966 - 2012. Version 02.19.2014 USGS Patuxent
+#'   Wildlife Research Center, Laurel, MD
+#' 
+#' @examples
+#' Regions <- GetRegions()
+#' 
 #' @export GetRegions
 GetRegions <- function(Dir = 
                     "ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/", 
@@ -14,7 +44,7 @@ GetRegions <- function(Dir =
   # read column names
   names(CountryCodes) <- c(unlist(read.table(File, skip=2, nrows=1, 
                                              stringsAsFactors=FALSE)))
-
+  
 # Read in state/province/terratory names and code
   RegionWidths <- c(unlist(read.table(File, skip=10, nrows=1, 
                                       stringsAsFactors=FALSE)))
