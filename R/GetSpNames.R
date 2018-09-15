@@ -37,7 +37,7 @@ GetSpNames <- function(bbs_dir = NULL) {
     
   File <- paste0(bbs_dir, "SpeciesList.txt")
   
-  All <- scan(File, what="character", sep="\n", encoding="latin1")
+  All <- scan(File, what="character", sep="\n", encoding="latin1", quiet = TRUE)
   
   Delimiter <- grep("^-", All)
   
