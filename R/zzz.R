@@ -5,6 +5,7 @@ bbs_ftp <- function() {
 
 
 #' @importFrom utils read.fwf
+#' @importFrom utils download.file
 read_bbs_txt <- function(txt_file) {
   
   # if txt_file path ftp or http, download
