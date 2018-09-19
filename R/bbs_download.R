@@ -75,13 +75,9 @@ bbs_download <- function(dest, bbs_dir = NULL, stateprovs = NULL,
   dest <- paste0(dest, '/')
   bbs_dir <- paste0(bbs_dir, '/')
   
-  ## download top-level metxadata files
+  ## download top-level metadata files
   if (meta == TRUE) {
-    tl <- bbs_dir
-    tl_lines <- readLines(url(tl, method = 'libcurl'))
-    tl_lines_split <- strsplit(tl_lines, '[[:space:]]+')
-    tl_files <- vapply(tl_lines_split, function(x) x[length(x)], character(1))
-    tl_files <- tl_files[grep('\\.txt$|\\.pdf$|\\.zip$', tl_files)]
+    tl_files <- bbs_read_dir(bbs_dir)
     
     for(i in 1:length(tl_files)) {
       download.file(paste0(tl, tl_files[i]),
@@ -97,11 +93,8 @@ bbs_download <- function(dest, bbs_dir = NULL, stateprovs = NULL,
       dir.create(paste0(dest, 'States'))
     }
     
-    ts <- paste0(bbs_dir, 'States/')
-    ts_lines <- readLines(url(ts, method = 'libcurl'))
-    ts_lines_split <- strsplit(ts_lines, '[[:space:]]+')
-    ts_files <- vapply(ts_lines_split, function(x) x[length(x)], character(1))
-    ts_files <- ts_files[grep('\\.txt$|\\.pdf$|\\.zip$', ts_files)]
+    ts_dir <- 'States/'
+    ts_files <- bbs_read_dir(paste0(bbs_dir, ts_dir))
     
     # empty sets
     ts_files_c <- character(0)
@@ -127,7 +120,7 @@ bbs_download <- function(dest, bbs_dir = NULL, stateprovs = NULL,
     # download 10-stop files
     for(i in 1:length(ts_files)) {
       download.file(paste0(ts, ts_files[i]),
-                    paste0(dest, 'States/', ts_files[i]))
+                    paste0(dest, ts_dir, ts_files[i]))
     }
   }
   
@@ -142,16 +135,12 @@ bbs_download <- function(dest, bbs_dir = NULL, stateprovs = NULL,
       dir.create(paste0(dest, '50-StopData/1997ToPresent_SurveyWide'))
     }
     
-    fs <- paste0(bbs_dir, '50-StopData/1997ToPresent_SurveyWide/')
-    fs_lines <- readLines(url(fs, method = 'libcurl'))
-    fs_lines_split <- strsplit(fs_lines, '[[:space:]]+')
-    fs_files <- vapply(fs_lines_split, function(x) x[length(x)], character(1))
-    fs_files <- fs_files[grep('\\.txt$|\\.pdf$|\\.zip$', fs_files)]
+    fs_dir <- '50-StopData/1997ToPresent_SurveyWide/'
+    fs_files <- bbs_read_dir(paste0(bbs_dir, fs_dir))
     
     for(i in 1:length(fs_files)) {
       download.file(paste0(fs, fs_files[i]),
-                    paste0(dest, '50-StopData/1997ToPresent_SurveyWide/',
-                           fs_files[i]))
+                    paste0(dest, fs_dir, fs_files[i]))
     }
   }
 }

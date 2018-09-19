@@ -1,11 +1,24 @@
 
+#' @noRd
 bbs_ftp <- function() {
   "ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/"
+}
+
+#' @noRd
+bbs_read_dir <- function(dir) {
+  bbs_con <- url(dir, method = 'libcurl')
+  dir_lines <- readLines(bbs_con)
+  close(bbs_con)
+  dir_lines_split <- strsplit(dir_lines, '[[:space:]]+')
+  dir_files <- vapply(dir_lines_split, function(x) x[length(x)], character(1))
+  dir_files <- dir_files[grep('\\.txt$|\\.pdf$|\\.zip$', dir_files)]
+  return(dir_files)
 }
 
 
 #' @importFrom utils read.fwf
 #' @importFrom utils download.file
+#' @noRd
 read_bbs_txt <- function(txt_file) {
   
   # if txt_file path ftp or http, download
