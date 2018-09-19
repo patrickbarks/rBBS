@@ -25,30 +25,24 @@ csv_unzip <- function(zip_path) {
   zip_path_split <- strsplit(zip_path, '/+')[[1]]
   file_zip <- zip_path_split[length(zip_path_split)]
   file_csv <- gsub('\\.zip', '\\.csv', file_zip)
+  temp_dir <- tempdir()
   
   if(grepl('^http:|^ftp:', zip_path)) {
     temp_file <- tempfile()
     download.file(zip_path, temp_file)
-    temp_dir <- tempdir()
     unzip(temp_file, exdir = temp_dir)
-    temp_dir_files <- list.files(temp_dir)
-    file_csv_get <- temp_dir_files[tolower(temp_dir_files) == tolower(file_csv)]
-    dat <- suppressMessages(read_csv(paste0(temp_dir, '/', file_csv_get),
-                                     na = c('NA', 'NULL'),
-                                     progress = FALSE))
     unlink(temp_file)
-    unlink(temp_dir)
   } else {
-    temp_dir <- tempdir()
     unzip(zip_path, exdir = temp_dir)
-    temp_dir_files <- list.files(temp_dir)
-    file_csv_get <- temp_dir_files[tolower(temp_dir_files) == tolower(file_csv)]
-    dat <- suppressMessages(read_csv(paste0(temp_dir, '/', file_csv_get),
-                                     na = c('NA', 'NULL'),
-                                     progress = FALSE))
-    unlink(temp_dir)
   }
   
+  temp_dir_files <- list.files(temp_dir)
+  file_csv_get <- temp_dir_files[tolower(temp_dir_files) == tolower(file_csv)]
+  dat <- suppressMessages(read_csv(paste0(temp_dir, '/', file_csv_get),
+                                   na = c('NA', 'NULL'),
+                                   progress = FALSE))
+  
+  unlink(temp_dir)
   return(dat)
 }
 
