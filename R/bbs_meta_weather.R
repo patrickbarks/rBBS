@@ -52,10 +52,10 @@
 #'   Wildlife Research Center, Laurel, MD
 #'
 #' @examples
-#' Weather <- GetWeather()
+#' weather <- bbs_meta_weather()
 #' 
-#' @export GetWeather
-GetWeather <- function(bbs_dir = NULL) {
+#' @export bbs_meta_weather
+bbs_meta_weather <- function(bbs_dir = NULL) {
   
   if (is.null(bbs_dir)) {
     bbs_dir <- bbs_ftp()

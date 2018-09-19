@@ -29,10 +29,10 @@
 #'   Wildlife Research Center, Laurel, MD
 #' 
 #' @examples
-#' Regions <- GetRegions()
+#' regions <- bbs_meta_regions()
 #' 
-#' @export GetRegions
-GetRegions <- function(bbs_dir = NULL, ZipFiles = FALSE) {
+#' @export bbs_meta_regions
+bbs_meta_regions <- function(bbs_dir = NULL, ZipFiles = FALSE) {
   
   if (is.null(bbs_dir)) {
     bbs_dir <- bbs_ftp()

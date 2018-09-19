@@ -21,10 +21,10 @@
 #'   Survey, Results and Analysis 1966 - 2012. Version 02.19.2014 USGS Patuxent
 #'   Wildlife Research Center, Laurel, MD
 #' @examples
-#' Bcr <- GetBcr()
+#' bcr <- bbs_meta_bcr()
 #' 
-#' @export GetBcr
-GetBcr <- function(bbs_dir = NULL) {
+#' @export bbs_meta_bcr
+bbs_meta_bcr <- function(bbs_dir = NULL) {
 
   if (is.null(bbs_dir)) {
     bbs_dir <- bbs_ftp()

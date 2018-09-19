@@ -32,10 +32,10 @@
 #'   Wildlife Research Center, Laurel, MD
 #' 
 #' @examples
-#' Routes <- GetRoutes()
+#' routes <- bbs_meta_routes()
 #' 
-#' @export GetRoutes
-GetRoutes <- function(bbs_dir = NULL) {
+#' @export bbs_meta_routes
+bbs_meta_routes <- function(bbs_dir = NULL) {
   
   if (is.null(bbs_dir)) {
     bbs_dir <- bbs_ftp()

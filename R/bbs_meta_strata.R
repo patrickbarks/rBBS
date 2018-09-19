@@ -20,10 +20,10 @@
 #'   Survey, Results and Analysis 1966 - 2012. Version 02.19.2014 USGS Patuxent
 #'   Wildlife Research Center, Laurel, MD
 #' @examples
-#' Strata <- GetStrata()
+#' strata <- bbs_meta_strata()
 #' 
-#' @export GetStrata
-GetStrata <- function(bbs_dir = NULL) {
+#' @export bbs_meta_strata
+bbs_meta_strata <- function(bbs_dir = NULL) {
 
   # TODO: add Strata areas from:
   #  https://www.pwrc.usgs.gov/bbs/stratanames/index.html
