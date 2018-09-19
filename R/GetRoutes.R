@@ -41,7 +41,12 @@ GetRoutes <- function(bbs_dir = NULL) {
     bbs_dir <- bbs_ftp()
   }
   
-  routes=GetUnzip(ZipName=paste0(bbs_dir, "routes.zip"), FileName="routes.csv")
-  routes$routeID=paste(routes$statenum, routes$Route)
-  routes
+  bbs_dir <- '~/bbs_data/'
+  zip_path <- paste0(bbs_dir, "/routes.zip")
+
+  out <- csv_unzip(paste0(bbs_dir, "/routes.zip"))
+  names(out) <- tolower(names(out))
+  out$routeid <- paste(out$statenum, out$route)
+  
+  return(out)
 }

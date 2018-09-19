@@ -56,7 +56,14 @@
 #' 
 #' @export GetWeather
 GetWeather <- function(bbs_dir = NULL) {
-  weather=GetUnzip(ZipName=paste0(bbs_dir, "Weather.zip"), FileName="weather.csv")
-  weather$routeID=paste(weather$statenum, weather$Route)
-  weather
+  
+  if (is.null(bbs_dir)) {
+    bbs_dir <- bbs_ftp()
+  }
+  
+  out <- csv_unzip(paste0(bbs_dir, "/Weather.zip"))
+  names(out) <- tolower(names(out))
+  out$routeid <- paste(out$statenum, out$route)
+  
+  return(out)
 }
