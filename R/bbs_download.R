@@ -80,7 +80,7 @@ bbs_download <- function(dest, bbs_dir = NULL, stateprovs = NULL,
     tl_files <- bbs_read_dir(bbs_dir)
     
     for(i in 1:length(tl_files)) {
-      download.file(paste0(tl, tl_files[i]),
+      download.file(paste0(bbs_dir, tl_files[i]),
                     paste0(dest, tl_files[i]))
     }
   }
@@ -93,7 +93,7 @@ bbs_download <- function(dest, bbs_dir = NULL, stateprovs = NULL,
       dir.create(paste0(dest, 'States'))
     }
     
-    ts_dir <- 'States/'
+    ts_dir <- '/States/'
     ts_files <- bbs_read_dir(paste0(bbs_dir, ts_dir))
     
     # empty sets
@@ -119,7 +119,7 @@ bbs_download <- function(dest, bbs_dir = NULL, stateprovs = NULL,
     
     # download 10-stop files
     for(i in 1:length(ts_files)) {
-      download.file(paste0(ts, ts_files[i]),
+      download.file(paste0(bbs_dir, ts_dir, ts_files[i]),
                     paste0(dest, ts_dir, ts_files[i]))
     }
   }
@@ -139,7 +139,7 @@ bbs_download <- function(dest, bbs_dir = NULL, stateprovs = NULL,
     fs_files <- bbs_read_dir(paste0(bbs_dir, fs_dir))
     
     for(i in 1:length(fs_files)) {
-      download.file(paste0(fs, fs_files[i]),
+      download.file(paste0(bbs_dir, fs_dir, fs_files[i]),
                     paste0(dest, fs_dir, fs_files[i]))
     }
   }
