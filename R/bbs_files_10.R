@@ -11,9 +11,6 @@
 #' 
 #' @return
 #' \code{data.frame} with the following columns:
-#'   \item{country_num}{Integer code for country}
-#'   \item{country_name}{Name of country}
-#'   \item{state_num}{Integer code for state/province/territory}
 #'   \item{state_name}{Name of state/province/territory}
 #'   \item{ten_stop_file}{Name of zip file with 10-stop survey data}
 #' 
@@ -28,27 +25,51 @@
 #'   Wildlife Research Center, Laurel, MD
 #' 
 #' @examples
-#' regions <- bbs_meta_regions()
 #' 
-#' @importFrom  dplyr left_join
-#' @export bbs_meta_regions
-bbs_meta_regions <- function(bbs_dir = NULL, zip_files = FALSE) {
+#' @importFrom tibble tibble
+#' @export bbs_files_10
+bbs_files_10 <- function(bbs_dir = NULL) {
   
   if (is.null(bbs_dir)) {
     bbs_dir <- bbs_ftp()
   }
   
-  # read RegionCodes.txt
-  regions <- read_bbs_txt(paste0(bbs_dir, '/RegionCodes.txt'))
-  regions$state_name <- bbs_stateprov(regions$state_name)
-  regions$country_name <- vapply(regions$country_num, bbs_country_switch, '')
-  regions <- regions[,c(1, 4, 2, 3)]
+  # Read README.txt
+  txt_file <- paste0(bbs_dir, '/README.txt')
   
-  # add names of 10-stop zip archives
-  if (zip_files == TRUE) {
-    file_names <- bbs_files_10(bbs_dir = bbs_dir)
-    regions <- left_join(regions, file_names, by = 'state_name')
+  # if txt_file path ftp or http, download
+  if (grepl('^ftp:|^http:|^https:', txt_file)) {
+    temp <- tempfile()
+    download.file(txt_file, temp)
+  } else {
+    temp <- txt_file
   }
   
-  return(regions)
+  # read lines
+  txt_lines <- scan(temp, what = "character", sep = "\n",
+                    encoding = "latin1", quiet = TRUE,
+                    blank.lines.skip = FALSE)
+  
+  line_start <- grep("Files in the States Directory", txt_lines) + 2
+  line_blank <- which(txt_lines == "")
+  line_end <- min(line_blank[line_blank > line_start]) - 1
+  
+  txt_lines <- txt_lines[line_start:line_end]
+  txt_lines <- gsub('\t', '', txt_lines)
+  
+  # extract state names and 10-stop file names
+  ten_stop_file <- vapply(
+    txt_lines, function(x) strsplit(x, '[[:space:]][[:space:]]+')[[1]][1],
+    '', USE.NAMES = FALSE
+  )
+  
+  state_name <- vapply(
+    txt_lines, function(x) strsplit(x, '[[:space:]][[:space:]]+')[[1]][3],
+    '', USE.NAMES = FALSE
+  )
+  
+  # standardize state names
+  state_name <- bbs_stateprov(state_name)
+  
+  return(tibble(state_name, ten_stop_file))
 }
