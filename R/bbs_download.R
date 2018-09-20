@@ -20,6 +20,7 @@
 #'   geographic levels may be combined; e.g. \code{stateprov = c('Canada',
 #'   'Montana', 'North Dakota')} will download data for all Canadian
 #'   provinces/territories plus Montana and North Dakota.
+#' @author Bob O'Hara
 #' @author Patrick Barks <patrick.barks@@gmail.com>
 #' @references Sauer, J. R., J. E. Hines, J. E. Fallon, K. L. Pardieck, D. J.
 #'   Ziolkowski, Jr., and W. A. Link. 2014. The North American Breeding Bird

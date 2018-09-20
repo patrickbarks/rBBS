@@ -13,19 +13,19 @@ local directory, or ftp address for an older BBS release.}
 }
 \value{
 \code{data.frame} with the following columns:
-  \item{countrynum}{Integer code for country: 124 (Canada), 484 (Mexico), or
+  \item{country_num}{Integer code for country: 124 (Canada), 484 (Mexico), or
   840 (USA)}
-  \item{statenum}{Integer code for state}
-  \item{Route}{Integer code for route}
-  \item{Active}{Integer code for whether route is active: 1 if active (note:
+  \item{state_num}{Integer code for state}
+  \item{route}{Integer code for route}
+  \item{route_name}{Name of route}
+  \item{active}{Integer code for whether route is active: 1 if active (note:
   might be active, but not sampled)}
-  \item{Lati}{Latitude}
-  \item{Longi}{Longitude}
-  \item{Stratum}{The BBS physiographic stratum code for that route. }
-  \item{BCR}{Bird Conservation Region}
-  \item{LandTypeID}{Integer for type of land that a route is located on}
-  \item{RouteTypeID}{Route substrate; 1 = Roadside, 2 = Water, 3 = Off-road}
-  \item{RouteTypeDetailId}{Indicates route length and selection criteria}
+  \item{latitude}{Latitude of route starting point}
+  \item{longitude}{Longitude of route starting point}
+  \item{stratum}{The BBS physiographic stratum code for that route. }
+  \item{bcr}{Bird Conservation Region}
+  \item{route_type_id}{Route substrate; 1 = Roadside, 2 = Water, 3 = Off-road}
+  \item{route_type_detail_id}{Indicates route length and selection criteria}
 }
 \description{
 Gets meta-data about BBS routes
@@ -45,4 +45,6 @@ Sauer, J. R., J. E. Hines, J. E. Fallon, K. L. Pardieck, D. J.
 }
 \author{
 Bob O'Hara
+
+Patrick Barks <patrick.barks@gmail.com>
 }

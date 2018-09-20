@@ -13,10 +13,10 @@ local directory, or ftp address for an older BBS release.}
 }
 \value{
 \code{data.frame} with the following columns:
-  \item{StratumID}{Stratum integer identifier}
-  \item{StratumName}{Stratum name in English}
-  \item{StratumNameFrench}{Stratum name in French}
-  \item{StratumNameSpanish}{Stratum name in Spanish}
+  \item{stratum}{Integer code for stratum}
+  \item{stratum_name}{Stratum name in English}
+  \item{stratum_name_french}{Stratum name in French}
+  \item{stratum_name_spanish}{Stratum name in Spanish}
 }
 \description{
 Get names and ID numbers of geographic strata in the North American Breeding
@@ -34,4 +34,6 @@ Sauer, J. R., J. E. Hines, J. E. Fallon, K. L. Pardieck, D. J.
 }
 \author{
 Bob O'Hara
+
+Patrick Barks <patrick.barks@gmail.com>
 }

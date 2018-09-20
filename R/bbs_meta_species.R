@@ -10,17 +10,18 @@
 #'
 #' @return
 #' \code{data.frame} with the following columns:
-#'   \item{Seq}{Phylogenetic sequence number}
-#'   \item{AOU}{American Ornithological Union code number}
-#'   \item{English_Common_Name}{English Common Name}
-#'   \item{French_Common_Name}{French Common Name}
-#'   \item{Spanish_Common_Name}{Spanish Common Name}
-#'   \item{ORDER}{Taxonomic order}
-#'   \item{Family}{Taxonomic family}
-#'   \item{Genus}{Taxonomic genus}
-#'   \item{Species}{Taxonomic species name}
+#'   \item{seq}{Phylogenetic sequence number}
+#'   \item{aou}{American Ornithological Union code number}
+#'   \item{english_common_name}{English Common Name}
+#'   \item{french_common_name}{French Common Name}
+#'   \item{spanish_common_name}{Spanish Common Name}
+#'   \item{order}{Taxonomic order}
+#'   \item{family}{Taxonomic family}
+#'   \item{genus}{Taxonomic genus}
+#'   \item{species}{Taxonomic species name}
 #' 
 #' @author Bob O'Hara
+#' @author Patrick Barks <patrick.barks@@gmail.com>
 #' @references Sauer, J. R., J. E. Hines, J. E. Fallon, K. L. Pardieck, D. J.
 #'   Ziolkowski, Jr., and W. A. Link. 2014. The North American Breeding Bird
 #'   Survey, Results and Analysis 1966 - 2012. Version 02.19.2014 USGS Patuxent

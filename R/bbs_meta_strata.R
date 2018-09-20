@@ -9,12 +9,13 @@
 #'
 #' @return
 #' \code{data.frame} with the following columns:
-#'   \item{StratumID}{Stratum integer identifier}
-#'   \item{StratumName}{Stratum name in English}
-#'   \item{StratumNameFrench}{Stratum name in French}
-#'   \item{StratumNameSpanish}{Stratum name in Spanish}
+#'   \item{stratum}{Integer code for stratum}
+#'   \item{stratum_name}{Stratum name in English}
+#'   \item{stratum_name_french}{Stratum name in French}
+#'   \item{stratum_name_spanish}{Stratum name in Spanish}
 #' 
 #' @author Bob O'Hara
+#' @author Patrick Barks <patrick.barks@@gmail.com>
 #' @references Sauer, J. R., J. E. Hines, J. E. Fallon, K. L. Pardieck, D. J.
 #'   Ziolkowski, Jr., and W. A. Link. 2014. The North American Breeding Bird
 #'   Survey, Results and Analysis 1966 - 2012. Version 02.19.2014 USGS Patuxent

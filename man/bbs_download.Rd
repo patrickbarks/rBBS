@@ -58,5 +58,7 @@ Sauer, J. R., J. E. Hines, J. E. Fallon, K. L. Pardieck, D. J.
   Wildlife Research Center, Laurel, MD
 }
 \author{
+Bob O'Hara
+
 Patrick Barks <patrick.barks@gmail.com>
 }

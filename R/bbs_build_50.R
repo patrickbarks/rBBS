@@ -4,7 +4,23 @@
 #'
 #' @param bbs_dir Directory from which to load data. Must be a path to an
 #'   existing local directory.
+#'   
+#' @return
+#' \code{data.frame} with the following columns:
+#'   \item{route_data_id}{Data identification number for unique combinations of
+#'   country_num, state, route, rpid, and year}
+#'   \item{country_num}{Three digit code that identifies country: 124 (Canada),
+#'   484 (Mexico), or 840 (USA)}
+#'   \item{state_num}{Two digit numerical code that identifies the state,
+#'   province, or territory}
+#'   \item{route}{Three digit code that identifies the route.}
+#'   \item{rpid}{The run protocol identification number.}
+#'   \item{year}{The year.}
+#'   \item{aou}{American Ornithological Union code number}
+#'   \item{stop_1 ... stop_50}{Total individuals of the species recorded on
+#'   given stop.}
 #' 
+#' @author Bob O'Hara
 #' @author Patrick Barks <patrick.barks@@gmail.com>
 #' @references Sauer, J. R., J. E. Hines, J. E. Fallon, K. L. Pardieck, D. J.
 #'   Ziolkowski, Jr., and W. A. Link. 2014. The North American Breeding Bird

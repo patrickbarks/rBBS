@@ -13,10 +13,10 @@ local directory, or ftp address for an older BBS release.}
 }
 \value{
 \code{data.frame} with the following columns:
-  \item{BCRId}{BCR integer identifier}
-  \item{BCRName}{BCR name in English}
-  \item{BCRNameFrench}{BCR name in French}
-  \item{BCRNameSpanish}{BCR name in Spanish}
+  \item{bcr}{Integer code for BCR}
+  \item{bcr_name}{BCR name in English}
+  \item{bcr_name_french}{BCR name in French}
+  \item{bcr_name_spanish}{BCR name in Spanish}
 }
 \description{
 Get names and ID numbers of Bird Conservation Regions (BCRs) from the North
@@ -35,4 +35,6 @@ Sauer, J. R., J. E. Hines, J. E. Fallon, K. L. Pardieck, D. J.
 }
 \author{
 Bob O'Hara
+
+Patrick Barks <patrick.barks@gmail.com>
 }
