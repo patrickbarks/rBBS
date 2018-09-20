@@ -40,9 +40,8 @@ bbs_meta_routes <- function(bbs_dir = NULL) {
     bbs_dir <- bbs_ftp()
   }
   
-  bbs_dir <- '~/bbs_data/'
   zip_path <- paste0(bbs_dir, "/routes.zip")
-
+  
   out <- csv_unzip(paste0(bbs_dir, "/routes.zip"))
   names(out) <- tolower(names(out))
   
