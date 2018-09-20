@@ -46,7 +46,6 @@ local directory, or ftp address for an older BBS release.}
   \item{Assistant}{Did someone assist? 1 if they did, otherwise 0.}
   \item{RunType}{If this run is acceptable by BBS standards, then 1,
   otherwise 0.}
-  \item{routeID}{unique route ID}
 }
 \description{
 Reads Weather meta-data in BBS, from Weather.zip. Contains other meta-data

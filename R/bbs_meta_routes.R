@@ -21,8 +21,6 @@
 #'   \item{LandTypeID}{Integer for type of land that a route is located on}
 #'   \item{RouteTypeID}{Route substrate; 1 = Roadside, 2 = Water, 3 = Off-road}
 #'   \item{RouteTypeDetailId}{Indicates route length and selection criteria}
-#'   \item{routeID}{Route ID (mainly for internal use, to make sure routes are
-#'   unique)}
 #' 
 #' @details See 'bbs_dir/RouteInf.txt' for documentation.
 #' @author Bob O'Hara
@@ -46,7 +44,6 @@ bbs_meta_routes <- function(bbs_dir = NULL) {
 
   out <- csv_unzip(paste0(bbs_dir, "/routes.zip"))
   names(out) <- tolower(names(out))
-  out$routeid <- paste(out$statenum, out$route)
   
   return(out)
 }

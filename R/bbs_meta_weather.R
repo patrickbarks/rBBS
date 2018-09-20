@@ -42,7 +42,6 @@
 #'   \item{Assistant}{Did someone assist? 1 if they did, otherwise 0.}
 #'   \item{RunType}{If this run is acceptable by BBS standards, then 1,
 #'   otherwise 0.}
-#'   \item{routeID}{unique route ID}
 #' 
 #' @details See 'bbs_dir/WeatherInf.txt' for documentation.
 #' @author Bob O'Hara
@@ -63,7 +62,6 @@ bbs_meta_weather <- function(bbs_dir = NULL) {
   
   out <- csv_unzip(paste0(bbs_dir, "/Weather.zip"))
   names(out) <- tolower(names(out))
-  out$routeid <- paste(out$statenum, out$route)
   
   return(out)
 }

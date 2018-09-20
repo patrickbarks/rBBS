@@ -26,8 +26,6 @@ local directory, or ftp address for an older BBS release.}
   \item{LandTypeID}{Integer for type of land that a route is located on}
   \item{RouteTypeID}{Route substrate; 1 = Roadside, 2 = Water, 3 = Off-road}
   \item{RouteTypeDetailId}{Indicates route length and selection criteria}
-  \item{routeID}{Route ID (mainly for internal use, to make sure routes are
-  unique)}
 }
 \description{
 Gets meta-data about BBS routes
