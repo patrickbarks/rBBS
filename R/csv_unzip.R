@@ -48,6 +48,8 @@ csv_unzip <- function(zip_path) {
                                    na = c('NA', 'NULL'),
                                    progress = FALSE))
   
+  names(dat) <- bbs_col(names(dat))
+  
   unlink(temp_dir)
   return(dat)
 }

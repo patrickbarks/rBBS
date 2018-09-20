@@ -18,6 +18,7 @@ bbs_read_dir <- function(dir) {
 
 #' @importFrom utils read.fwf
 #' @importFrom utils download.file
+#' @importFrom tibble as_tibble
 #' @noRd
 read_bbs_txt <- function(txt_file) {
   
@@ -37,12 +38,66 @@ read_bbs_txt <- function(txt_file) {
   # extract column names and widths
   delim <- grep("^-", txt_lines)
   col_names <- strsplit(txt_lines[delim - 1], split = '[[:blank:]]+')[[1]]
+  col_names <- bbs_col(col_names)
   col_dashes <- strsplit(txt_lines[delim], split = '[[:blank:]]+')[[1]]
   col_widths <- nchar(col_dashes) + 1
   
   # read table component of txt_file as data.frame
-  read.fwf(temp, skip = delim, widths = col_widths,
-           fileEncoding = 'Latin1', strip.white = TRUE,
-           stringsAsFactors = FALSE, col.names = col_names,
-           na.strings = c('N/A', 'NULL', 's/o', 'N/D'))
+  df <- read.fwf(temp, skip = delim, widths = col_widths,
+                 fileEncoding = 'Latin1', strip.white = TRUE,
+                 stringsAsFactors = FALSE, col.names = col_names,
+                 na.strings = c('N/A', 'NULL', 's/o', 'N/D'))
+  
+  # convert to tibble
+  return(as_tibble(df))
 }
+
+
+
+#' @noRd
+bbs_col_switch <- function(x) {
+  
+  switch(x,
+         'bcrid' = 'bcr',
+         'bcrname' = 'bcr_name',
+         'bcrnamefrench' = 'bcr_name_french',
+         'bcrnamespanish' = 'bcr_name_spanish',
+         'stratumid' = 'stratum',
+         'stratumname' = 'stratum_name',
+         'stratumnamefrench' = 'stratum_name_french',
+         'stratumnamespanish' = 'stratum_name_spanish',
+         'countrynum' = 'country_num',
+         'regioncode' = 'state_num',
+         'state/prov/terrname' = 'state_prov_name',
+         'countryname' = 'country_name',
+         'statenum' = 'state_num',
+         'routename' = 'route_name',
+         'routetypeid' = 'route_type_id',
+         'routetypedetailid' = 'route_type_detail_id',
+         'routedataid' = 'route_data_id',
+         'obsn' = 'obs_n',
+         'totalspp' = 'total_spp',
+         'starttemp' = 'start_temp',
+         'endtemp' = 'end_temp',
+         'tempscale' = 'temp_scale',
+         'startwind' = 'start_wind',
+         'endwind' = 'end_wind',
+         'startsky' = 'start_sky',
+         'endsky' = 'end_sky',
+         'starttime' = 'start_time',
+         'endtime' = 'end_time',
+         'qualitycurrentid' = 'quality_current_id',
+         'runtype' = 'run_type',
+         'stoptotal' = 'stop_total',
+         'speciestotal' = 'species_total',
+         x)
+}
+
+#' @noRd
+bbs_col <- function(z) {
+  z <- tolower(z)
+  z <- gsub('^count(?=[[:digit:]])', 'count_', z, perl = TRUE)
+  z <- vapply(z, bbs_col_switch, '', USE.NAMES = FALSE)
+  return(z)
+}
+
