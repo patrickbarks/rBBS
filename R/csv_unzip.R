@@ -25,7 +25,8 @@ csv_unzip <- function(zip_path) {
   zip_path_split <- strsplit(zip_path, '/+')[[1]]
   file_zip <- zip_path_split[length(zip_path_split)]
   file_csv <- gsub('\\.zip', '\\.csv', file_zip)
-  temp_dir <- tempdir()
+  temp_dir <- paste0(tempdir(), '/', paste(sample(letters, 6), collapse = ''))
+  dir.create(temp_dir)
   
   if(grepl('^http:|^ftp:', zip_path)) {
     temp_file <- tempfile()
@@ -36,9 +37,14 @@ csv_unzip <- function(zip_path) {
     unzip(zip_path, exdir = temp_dir)
   }
   
-  temp_dir_files <- list.files(temp_dir)
-  file_csv_get <- temp_dir_files[tolower(temp_dir_files) == tolower(file_csv)]
-  dat <- suppressMessages(read_csv(paste0(temp_dir, '/', file_csv_get),
+  file_csv <- list.files(temp_dir)
+  file_csv <- file_csv[grep('\\.csv$', file_csv)]
+  
+  if (length(file_csv) > 1) {
+    stop('Zip archive appears to contain more than one csv file')
+  }
+  
+  dat <- suppressMessages(read_csv(paste0(temp_dir, '/', file_csv),
                                    na = c('NA', 'NULL'),
                                    progress = FALSE))
   
