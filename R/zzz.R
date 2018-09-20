@@ -37,6 +37,7 @@ read_bbs_txt <- function(txt_file) {
   
   # extract column names and widths
   delim <- grep("^-", txt_lines)
+  if (length(delim) == 2) { delim <- delim[2] } # for RegionCodes.txt
   col_names <- strsplit(txt_lines[delim - 1], split = '[[:blank:]]+')[[1]]
   col_names <- bbs_col(col_names)
   col_dashes <- strsplit(txt_lines[delim], split = '[[:blank:]]+')[[1]]
@@ -68,7 +69,7 @@ bbs_col_switch <- function(x) {
          'stratumnamespanish' = 'stratum_name_spanish',
          'countrynum' = 'country_num',
          'regioncode' = 'state_num',
-         'state/prov/terrname' = 'state_prov_name',
+         'state/prov/terrname' = 'state_name',
          'countryname' = 'country_name',
          'statenum' = 'state_num',
          'routename' = 'route_name',
@@ -97,7 +98,44 @@ bbs_col_switch <- function(x) {
 bbs_col <- function(z) {
   z <- tolower(z)
   z <- gsub('^count(?=[[:digit:]])', 'count_', z, perl = TRUE)
+  z <- gsub('^stop(?=[[:digit:]])', 'stop_', z, perl = TRUE)
   z <- vapply(z, bbs_col_switch, '', USE.NAMES = FALSE)
   return(z)
 }
+
+
+#' @noRd
+title_case <- function(x) {
+  s <- strsplit(x, "[[:space:]]")[[1]]
+  paste(toupper(substring(s, 1, 1)), tolower(substring(s, 2)),
+        sep = "", collapse = " ")
+}
+
+#' @noRd
+bbs_stateprov_switch <- function(x) {
+  switch(x,
+         'Newfoundland And Labrador' = 'Newfoundland',
+         x)
+}
+
+#' @noRd
+bbs_stateprov <- function(z) {
+  z <- vapply(z, title_case, '', USE.NAMES = FALSE)
+  z <- vapply(z, bbs_stateprov_switch, '', USE.NAMES = FALSE)
+  return(z)
+}
+
+
+#' @noRd
+bbs_country_switch <- function(x) {
+  switch(as.character(x),
+         '124' = 'Canada',
+         '484' = 'Mexico',
+         '840' = 'United States',
+         stop('country_num not found'))
+}
+
+
+
+
 

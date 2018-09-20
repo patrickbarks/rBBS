@@ -4,32 +4,30 @@
 \alias{bbs_meta_regions}
 \title{Read BBS meta-data}
 \usage{
-bbs_meta_regions(bbs_dir = NULL, ZipFiles = FALSE)
+bbs_meta_regions(bbs_dir = NULL, zip_files = FALSE)
 }
 \arguments{
 \item{bbs_dir}{Directory from which to get data. Defaults to the USGS FTP
 directory for the most recent BBS release. May alternatively be a path to a
 local directory, or ftp address for an older BBS release.}
 
-\item{ZipFiles}{Logical: should the names of the zip files for the 10- and
+\item{zip_files}{Logical: should the names of the zip files for the 10- and
 50-stop data be added? Defaults to FALSE.}
 }
 \value{
 \code{data.frame} with the following columns:
-  \item{countrynum}{Country code}
-  \item{RegionCode}{Region code}
-  \item{State/Prov/TerrName}{Name of (US) state, (Canadian) province or
-  (Mexican) territory}
-  \item{CountryName}{Name of country}
-  \item{FileName10stop}{Name of zip file with 10 stop data}
-  \item{FileName50stop}{Name of zip file with 50 stop data}
+  \item{country_num}{Integer code for country}
+  \item{country_name}{Name of country}
+  \item{state_num}{Integer code for state/province/territory}
+  \item{state_name}{Name of state/province/territory}
+  \item{ten_stop_file}{Name of zip file with 10-stop survey data}
 }
 \description{
 Read in list of states/provinces/territories, and also names of zip files
 where the 10 stop data is kept.
 }
 \details{
-This is meta-data collated from the full database. Nore that not all
+This is meta-data collated from the full database. Note that not all
   regions have a zip file: in particular, there is no Mexican data, or data
   from Puerto Rico or Washington D.C.
 }
@@ -45,4 +43,6 @@ Sauer, J. R., J. E. Hines, J. E. Fallon, K. L. Pardieck, D. J.
 }
 \author{
 Bob O'Hara
+
+Patrick Barks <patrick.barks@gmail.com>
 }

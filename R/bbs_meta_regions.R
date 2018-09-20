@@ -6,23 +6,22 @@
 #' @param bbs_dir Directory from which to get data. Defaults to the USGS FTP
 #'   directory for the most recent BBS release. May alternatively be a path to a
 #'   local directory, or ftp address for an older BBS release.
-#' @param ZipFiles Logical: should the names of the zip files for the 10- and
+#' @param zip_files Logical: should the names of the zip files for the 10- and
 #'   50-stop data be added? Defaults to FALSE.
 #' 
 #' @return
 #' \code{data.frame} with the following columns:
-#'   \item{countrynum}{Country code}
-#'   \item{RegionCode}{Region code}
-#'   \item{State/Prov/TerrName}{Name of (US) state, (Canadian) province or
-#'   (Mexican) territory}
-#'   \item{CountryName}{Name of country}
-#'   \item{FileName10stop}{Name of zip file with 10 stop data}
-#'   \item{FileName50stop}{Name of zip file with 50 stop data}
+#'   \item{country_num}{Integer code for country}
+#'   \item{country_name}{Name of country}
+#'   \item{state_num}{Integer code for state/province/territory}
+#'   \item{state_name}{Name of state/province/territory}
+#'   \item{ten_stop_file}{Name of zip file with 10-stop survey data}
 #' 
-#' @details This is meta-data collated from the full database. Nore that not all
+#' @details This is meta-data collated from the full database. Note that not all
 #'   regions have a zip file: in particular, there is no Mexican data, or data
 #'   from Puerto Rico or Washington D.C.
 #' @author Bob O'Hara
+#' @author Patrick Barks <patrick.barks@@gmail.com>
 #' @references Sauer, J. R., J. E. Hines, J. E. Fallon, K. L. Pardieck, D. J.
 #'   Ziolkowski, Jr., and W. A. Link. 2014. The North American Breeding Bird
 #'   Survey, Results and Analysis 1966 - 2012. Version 02.19.2014 USGS Patuxent
@@ -31,89 +30,71 @@
 #' @examples
 #' regions <- bbs_meta_regions()
 #' 
+#' @importFrom  tibble as_tibble
 #' @export bbs_meta_regions
-bbs_meta_regions <- function(bbs_dir = NULL, ZipFiles = FALSE) {
+bbs_meta_regions <- function(bbs_dir = NULL, zip_files = FALSE) {
   
   if (is.null(bbs_dir)) {
     bbs_dir <- bbs_ftp()
   }
   
-  File <- paste0(bbs_dir, "RegionCodes.txt")
-  CountryWidths <- c(unlist(read.table(File, skip=3, nrows=1, 
-                                       stringsAsFactors=F)))
-  # read in country metadata: use a connection to pass the encoding correctly
-  #    (thanks to Peter Dalgaard & Brian Ripley for help with this)
-  con <- file(File,encoding="Latin1")
-  CountryCodes <- read.fwf(con, widths=1+nchar(CountryWidths), skip=4, n=3, 
-                           header=F, stringsAsFactors=F, strip.white=TRUE) 
-  # read column names
-  names(CountryCodes) <- c(unlist(read.table(File, skip=2, nrows=1, 
-                                             stringsAsFactors=FALSE)))
+  # read RegionCodes.txt
+  regions <- read_bbs_txt(paste0(bbs_dir, '/RegionCodes.txt'))
+  regions$state_name <- bbs_stateprov(regions$state_name)
+  regions$country_name <- vapply(regions$country_num, bbs_country_switch, '')
+  regions <- regions[,c(1, 4, 2, 3)]
   
-# Read in state/province/terratory names and code
-  RegionWidths <- c(unlist(read.table(File, skip=10, nrows=1, 
-                                      stringsAsFactors=FALSE)))
-  con <- file(File,encoding="Latin1")
-  RegionCodes <- read.fwf(con, widths=1+nchar(RegionWidths), skip=11, 
-                          header=FALSE, stringsAsFactors=FALSE, 
-                          strip.white=TRUE)
-  # read column names
-  names(RegionCodes) <- c(unlist(read.table(File, skip=9, nrows=1, 
-                                            stringsAsFactors=FALSE)))
-  RegionCodes$CountryName <- vapply(RegionCodes$countrynum, 
-                                    function(num, CCode) {
-    CCode$CountryName[num==CCode$CountryNum]
-  }, FUN.VALUE = "character", CCode = CountryCodes)
-
-  # Get zip file names
-  if(ZipFiles) {
-    readme.all <- scan(paste0(bbs_dir, "README.txt"), sep="\n", what=character(), 
-                       blank.lines.skip = FALSE, fileEncoding="Latin1")
-    readme.all <- gsub("\t","",readme.all)
-    PrecedingLine <- grep("States Directory:", readme.all)
-    EndLine <- which(readme.all[PrecedingLine:length(readme.all)]=="")[1]
+  if (zip_files == TRUE) {
     
-    ZipF.tmp <- strsplit(readme.all[PrecedingLine+(2:(EndLine-2))], '[ ]{2,}')
-    ZipF <- data.frame(State = unlist(lapply(ZipF.tmp, function(x) x[3])), 
-                           File = unlist(lapply(ZipF.tmp, function(x) x[1])), 
-                           stringsAsFactors = FALSE)
+    # Read README.txt
+    txt_file <- paste0(bbs_dir, '/README.txt')
     
-    RegionCodes$FileName10stop <- vapply(RegionCodes$`State/Prov/TerrName`, 
-                                         function(Name, zipf) {
-      #    Name <- "Newfoundland and Labrador"
-      file <- zipf$File[tolower(zipf$State)==tolower(Name)]
-      if(length(file)==0) {
-        Which.file <- vapply(tolower(zipf$State), function(state) 
-          any(grepl(paste0("^",state), tolower(Name))), FUN.VALUE = TRUE)
-        file <- zipf$File[Which.file]
-      }
-      if(length(file)==0) file <- as.character(NA)
-      file
-    }, FUN.VALUE = "character", zipf=ZipF)
-
-    Files50stop <- lapply(1:10, function(ind) {
-      zipf <- paste0(bbs_dir, "/50-StopData/1997ToPresent_SurveyWide/Fifty", 
-                     ind, ".zip")
-      dat <- GetUnzip(zipf, paste0("fifty", ind, ".csv"))
-      res <- unique(dat[,c("countrynum", "statenum")])
-      res$File50stop <- as.character(paste0("fifty", ind, ".csv"))
-      res
-    })
-    Files50stop.df <- ldply(Files50stop)
+    # if txt_file path ftp or http, download
+    if (grepl('^ftp:|^http:|^https:', txt_file)) {
+      temp <- tempfile()
+      download.file(txt_file, temp)
+    } else {
+      temp <- txt_file
+    }
     
-    RegionCodes$FileName50stop <- apply(RegionCodes, 1, function(rc, Fnames) {
-      cn <- as.integer(unlist(rc["countrynum"]))
-      rcd <- as.integer(unlist(rc["RegionCode"]))
-      File <- Fnames$File50stop[Fnames$countrynum==cn & Fnames$statenum==rcd]
-      if(length(File)>1) 
-        warning("state in more than one file, returning first state")
-      if(length(File)==0) File <- NA
-      File
-    }, Fnames=Files50stop.df)
-    RegionCodes$FileName50stop <- gsub("^f", "F", RegionCodes$FileName50stop)
-    RegionCodes$FileName50stop <- gsub("csv$", "zip", 
-                                       RegionCodes$FileName50stop)
+    # read lines
+    txt_lines <- scan(temp, what = "character", sep = "\n",
+                      encoding = "latin1", quiet = TRUE,
+                      blank.lines.skip = FALSE)
+    
+    line_start <- grep("Files in the States Directory", txt_lines) + 2
+    line_blank <- which(txt_lines == "")
+    line_end <- min(line_blank[line_blank > line_start]) - 1
+    
+    txt_lines <- txt_lines[line_start:line_end]
+    txt_lines <- gsub('\t', '', txt_lines)
+    
+    # extract state names and 10-stop file names
+    ten_stop_file <- vapply(
+      txt_lines,
+      function(x) strsplit(x, '[[:space:]][[:space:]]+')[[1]][1],
+      ''
+    )
+    
+    state_name <- vapply(
+      txt_lines,
+      function(x) strsplit(x, '[[:space:]][[:space:]]+')[[1]][3],
+      ''
+    )
+    
+    # standardize state names
+    state_name <- bbs_stateprov(state_name)
+    
+    # merge 10-stop file names with region data
+    df_file_names <- data.frame(state_name, ten_stop_file,
+                                stringsAsFactors = FALSE)
+    
+    regions <- merge(regions, df_file_names, by = 'state_name',
+                     all.x = TRUE)
+    regions <- regions[order(regions$country_num, regions$state_num),
+                       c(2, 3, 4, 1, 5)]
   }
   
-  RegionCodes
+  regions <- as_tibble(regions)
+  return(regions)
 }
