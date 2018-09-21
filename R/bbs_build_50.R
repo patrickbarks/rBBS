@@ -35,8 +35,12 @@ bbs_build_50 <- function(bbs_dir) {
   fs_dir <- '/50-StopData/1997ToPresent_SurveyWide/'
   files_fs <- list.files(paste0(bbs_dir, fs_dir))
   files_fs <- files_fs[grepl('\\.zip$', files_fs)]
-  paths_fs <- paste0(bbs_dir, fs_dir, files_fs)
   
+  if (length(files_fs) == 0) {
+    stop('No .zip files found within <bbs_dir>/50-StopData/1997ToPresent_SurveyWide/')
+  }
+  
+  paths_fs <- paste0(bbs_dir, fs_dir, files_fs)
   bbs_50_l <- lapply(paths_fs, csv_unzip)
   bbs_50 <- do.call(rbind.data.frame, bbs_50_l)
   
