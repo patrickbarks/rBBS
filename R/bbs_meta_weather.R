@@ -65,6 +65,8 @@ bbs_meta_weather <- function(bbs_dir = NULL) {
   
   out <- csv_unzip(paste0(bbs_dir, "/Weather.zip"))
   names(out) <- tolower(names(out))
+  out$state_num <- as.integer(out$state_num)
+  out$route <- as.integer(out$route)
   
   return(out)
 }

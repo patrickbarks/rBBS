@@ -37,7 +37,6 @@ bbs_meta_species <- function(bbs_dir = NULL) {
   }
   
   df <- read_bbs_txt(txt_file = paste0(bbs_dir, "SpeciesList.txt"))
-  df$aou <- formatC(df$aou, width = 5, flag = '0')
   
   return(df)
 }
