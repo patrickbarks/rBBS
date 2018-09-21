@@ -2,40 +2,100 @@
 % Please edit documentation in R/bbs_build_10.R
 \name{bbs_build_10}
 \alias{bbs_build_10}
-\title{Build data frame with North American Breeding Bird Survey 10-stop data}
+\title{Assemble North American Breeding Bird Survey 10-stop count data}
 \usage{
-bbs_build_10(bbs_dir)
+bbs_build_10(bbs_dir, zeros = FALSE, countries = NULL, states = NULL,
+  bcr = NULL, strata = NULL, aou = NULL, years = NULL)
 }
 \arguments{
-\item{bbs_dir}{Directory from which to load data. Must be a path to an
-existing local directory.}
+\item{bbs_dir}{Directory from which to load BBS data.
+
+Must be a path to an existing local directory with the same structure as the
+USGS BBS directory (ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/).}
+
+\item{zeros}{Build in counts of zero? Defaults to \code{FALSE}. (See
+Details)}
+
+\item{countries}{Vector of country names to subset to. Defaults to all
+available. Case insensitive. (See BBS file \emph{RegionCodes.txt})}
+
+\item{states}{Vector of state/province/territory names to subset to. Defaults
+to all available. Case insensitive. (See BBS file \emph{RegionCodes.txt})}
+
+\item{bcr}{Vector of Bird Conservation Region id numbers to subset to.
+Defaults to all available. (See BBS file \emph{BCR.txt})}
+
+\item{strata}{Vector of physiographic strata id numbers to subset to.
+Defaults to all available. (See BBS file \emph{BBSStrata.txt})}
+
+\item{aou}{Vector of species id numbers to subset to. Defaults to all
+available. (See BBS file \emph{SpeciesList.txt})}
+
+\item{years}{Vector of survey years to subset to. Defaults to all available.}
 }
 \value{
-\code{data.frame} with the following columns:
-  \item{route_data_id}{Data identification number for unique combinations of
-  country_num, state, route, rpid, and year}
-  \item{country_num}{Three digit code that identifies country: 124 (Canada),
-  484 (Mexico), or 840 (USA)}
-  \item{state_num}{Two digit numerical code that identifies the state,
-  province, or territory}
-  \item{route}{Three digit code that identifies the route.}
-  \item{rpid}{The run protocol identification number.}
-  \item{year}{The year.}
-  \item{aou}{American Ornithological Union code number}
-  \item{count_10}{Total individuals of the species recorded on stops 1-10.}
-  \item{count_20}{Total individuals of the species recorded on stops 11-20.}
-  \item{count_30}{Total individuals of the species recorded on stops 21-30.}
-  \item{count_40}{Total individuals of the species recorded on stops 31-40.}
-  \item{count_50}{Total individuals of the species recorded on stops 41-50.}
-  \item{stop_total}{Total number of stops out of 50 on which the species was
-  recorded.}
-  \item{species_total}{The total number of species recorded on that run of
-  the route.}
+A \code{data.frame} with the following columns:
+  \item{route_data_id}{integer code for unique combinations of country_num,
+  state, route, rpid, and year}
+  \item{country_num}{integer code for country: 124 (Canada), 484 (Mexico), or
+  840 (United States)}
+  \item{state_num}{integer code for state/province/territory (see BBS file
+  \emph{RegionCodes.txt})}
+  \item{route}{integer code for survey route (unique within states)}
+  \item{rpid}{integer Run Protocol Identification ID (see BBS file
+  \emph{RunProtocolID.txt})}
+  \item{year}{integer survey year}
+  \item{aou}{integer species code from American Ornithological Union}
+  \item{count_10}{total individuals of the species recorded on stops 1-10}
+  \item{count_20}{total individuals of the species recorded on stops 11-20}
+  \item{count_30}{total individuals of the species recorded on stops 21-30}
+  \item{count_40}{total individuals of the species recorded on stops 31-40}
+  \item{count_50}{total individuals of the species recorded on stops 41-50}
+  \item{stop_total}{number of stops out of 50 on which the species was
+  recorded}
+  \item{species_total}{total individuals recorded on that run of the route
+  (sum from all stops)}
 }
 \description{
-Build data frame with North American Breeding Bird Survey 10-stop data
+Assemble North American Breeding Bird Survey 10-stop count data into a data
+frame, optionally subset to select regions, years, and/or species. The
+underlying data come from state/province-specific zipped csv files within the
+BBS folder \emph{States/}. These csv files do not include counts of zero
+(i.e. when a species is not observed during a given survey), but counts of
+zero can optionally be built in (see argument \code{zeros}).\cr\cr
+\strong{Note:} Without counts of zero the full 10-stop dataset for 2017
+includes 6.4 million rows. With zeros it includes 90 million rows, which will
+take some time to build and require a few gigabytes of memory. If building
+with zeros, consider subsetting to regions, years, and/or species of
+interest.
+}
+\details{
+If \code{zeros = TRUE}, counts of zero are built in as follows:
+
+1. Find every unique combination of route-year-rpid matching the given subset
+arguments (or the whole dataset if no subset arguments given).
+
+2. Find every unique species (aou) that was recorded on those
+route-year-rpid.
+
+3. Create a data frame with every combination of those route-year-rpid and
+aou, and merge with the non-zero count data. Any route-year-rpid-aou rows
+with missing count data are then filled in with counts of zero.
+
+Note that this method is potentially inefficient in that it will yield counts
+of zero for species even in regions where they have never been observed.
 }
 \examples{
+\dontrun{
+# build whole dataset excluding counts of zero
+bbs <- bbs_build_10(bbs_dir = '.')
+
+# build with Canadian routes only, including counts of zero
+bbs <- bbs_build_10(bbs_dir = '.', zeros = TRUE, countries = 'Canada')
+
+# build for species Gray Jay (aou 4840), including counts of zero
+bbs <- bbs_build_10(bbs_dir = '.', zeros = TRUE, aou = 4840)
+}
 
 }
 \references{
@@ -43,6 +103,9 @@ Sauer, J. R., J. E. Hines, J. E. Fallon, K. L. Pardieck, D. J.
   Ziolkowski, Jr., and W. A. Link. 2014. The North American Breeding Bird
   Survey, Results and Analysis 1966 - 2012. Version 02.19.2014 USGS Patuxent
   Wildlife Research Center, Laurel, MD
+}
+\seealso{
+\code{\link{bbs_download}}
 }
 \author{
 Bob O'Hara
