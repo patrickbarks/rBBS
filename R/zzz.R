@@ -151,16 +151,16 @@ title_case <- function(x) {
 }
 
 #' @noRd
-bbs_stateprov_switch <- function(x) {
+bbs_state_switch <- function(x) {
   switch(x,
          'Newfoundland And Labrador' = 'Newfoundland',
          x)
 }
 
 #' @noRd
-bbs_stateprov <- function(z) {
+bbs_state <- function(z) {
   z <- vapply(z, title_case, '', USE.NAMES = FALSE)
-  z <- vapply(z, bbs_stateprov_switch, '', USE.NAMES = FALSE)
+  z <- vapply(z, bbs_state_switch, '', USE.NAMES = FALSE)
   return(z)
 }
 
@@ -174,7 +174,9 @@ bbs_country_switch <- function(x) {
          stop('country_num not found'))
 }
 
-
-
-
+#' @noRd
+bbs_country <- function(z) {
+  z <- vapply(z, bbs_country_switch, '', USE.NAMES = FALSE)
+  return(z)
+}
 

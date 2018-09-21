@@ -1,34 +1,41 @@
-#' Get taxonomic data from North American Breeding Bird Survey
+#' Get taxonomic metadata for North American Breeding Bird Survey
 #' 
 #' Get data frame with species names and associated taxonomic information from
 #' the North American Breeding Bird Survey (BBS). This data comes from the BBS
-#' file 'SpeciesList.txt'.
+#' file \emph{SpeciesList.txt}.
 #'
 #' @param bbs_dir Directory from which to get data. Defaults to the USGS FTP
 #'   directory for the most recent BBS release. May alternatively be a path to a
 #'   local directory, or ftp address for an older BBS release.
 #'
 #' @return
-#' \code{data.frame} with the following columns:
-#'   \item{seq}{Phylogenetic sequence number}
-#'   \item{aou}{American Ornithological Union code number}
-#'   \item{english_common_name}{English Common Name}
-#'   \item{french_common_name}{French Common Name}
-#'   \item{spanish_common_name}{Spanish Common Name}
-#'   \item{order}{Taxonomic order}
-#'   \item{family}{Taxonomic family}
-#'   \item{genus}{Taxonomic genus}
-#'   \item{species}{Taxonomic species name}
+#' A \code{data.frame} with the following columns:
+#'   \item{seq}{phylogenetic sequence number}
+#'   \item{aou}{integer species code from American Ornithological Union}
+#'   \item{english_common_name}{common name in English}
+#'   \item{french_common_name}{common name in French}
+#'   \item{spanish_common_name}{common name in Spanish}
+#'   \item{order}{taxonomic order}
+#'   \item{family}{taxonomic family}
+#'   \item{genus}{taxonomic genus}
+#'   \item{species}{taxonomic species name}
 #' 
 #' @author Bob O'Hara
 #' @author Patrick Barks <patrick.barks@@gmail.com>
-#' @references Sauer, J. R., J. E. Hines, J. E. Fallon, K. L. Pardieck, D. J.
-#'   Ziolkowski, Jr., and W. A. Link. 2014. The North American Breeding Bird
-#'   Survey, Results and Analysis 1966 - 2012. Version 02.19.2014 USGS Patuxent
-#'   Wildlife Research Center, Laurel, MD
+#' @references Pardieck, K.L., D.J. Ziolkowski Jr., M. Lutmerding and M.-A.R.
+#'   Hudson. 2018. North American Breeding Bird Survey Dataset 1966-2017,
+#'   version 2017.0. U.S. Geological Survey, Patuxent Wildlife Research Center.
+#'   \url{https://doi.org/10.5066/F76972V8}
+#'   
 #' @examples
+#' \dontrun{
+#' 
+#' # get from USGS ftp server
 #' species <- bbs_meta_species()
 #' 
+#' # get from local working directory
+#' species <- bbs_meta_species(bbs_dir = '.')
+#' }
 #' @export bbs_meta_species
 bbs_meta_species <- function(bbs_dir = NULL) {
 

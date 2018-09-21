@@ -1,38 +1,48 @@
-#' Get meta-data about BBS routes
+#' Get route metadata for North American Breeding Bird Survey
 #' 
-#' Gets meta-data about BBS routes
+#' Get a data frame with the names and codes of routes surveyed in the North
+#' American Breeding Bird Survey (BBS), and associated metadata. This data comes
+#' from the BBS file \emph{routes.csv}. See BBS file \emph{RouteInf.txt} for
+#' further documentation.
 #'
 #' @param bbs_dir Directory from which to get data. Defaults to the USGS FTP
 #'   directory for the most recent BBS release. May alternatively be a path to a
 #'   local directory, or ftp address for an older BBS release.
 #'
 #' @return
-#' \code{data.frame} with the following columns:
-#'   \item{country_num}{Integer code for country: 124 (Canada), 484 (Mexico), or
-#'   840 (USA)}
-#'   \item{state_num}{Integer code for state}
-#'   \item{route}{Integer code for route}
-#'   \item{route_name}{Name of route}
-#'   \item{active}{Integer code for whether route is active: 1 if active (note:
-#'   might be active, but not sampled)}
-#'   \item{latitude}{Latitude of route starting point}
-#'   \item{longitude}{Longitude of route starting point}
-#'   \item{stratum}{The BBS physiographic stratum code for that route. }
-#'   \item{bcr}{Bird Conservation Region}
-#'   \item{route_type_id}{Route substrate; 1 = Roadside, 2 = Water, 3 = Off-road}
-#'   \item{route_type_detail_id}{Indicates route length and selection criteria}
+#' A \code{data.frame} with the following columns:
+#'   \item{country_num}{integer code for country: 124 (Canada), 484 (Mexico),
+#'   840 (United States)}
+#'   \item{state_num}{integer code for state/province/territory}
+#'   \item{route}{integer code for route}
+#'   \item{route_name}{name of route}
+#'   \item{active}{logical indicator for whether route is active (note that a
+#'   route may be active but not sampled in a given year)}
+#'   \item{latitude}{latitude of route starting point in decimal degrees}
+#'   \item{longitude}{longitude of route starting point in decimal degrees}
+#'   \item{stratum}{integer code for physiographic stratum}
+#'   \item{bcr}{integer code for Bird Conservation Region}
+#'   \item{route_type_id}{integer indicator for route substrate: 1 (roadside),
+#'   2 (water), 3 (off-road)}
+#'   \item{route_type_detail_id}{integer indicates for route length and
+#'   selection criteria}
 #' 
-#' @details See 'bbs_dir/RouteInf.txt' for documentation.
 #' @author Bob O'Hara
 #' @author Patrick Barks <patrick.barks@@gmail.com>
-#' @references Sauer, J. R., J. E. Hines, J. E. Fallon, K. L. Pardieck, D. J.
-#'   Ziolkowski, Jr., and W. A. Link. 2014. The North American Breeding Bird
-#'   Survey, Results and Analysis 1966 - 2012. Version 02.19.2014 USGS Patuxent
-#'   Wildlife Research Center, Laurel, MD
+#' @references Pardieck, K.L., D.J. Ziolkowski Jr., M. Lutmerding and M.-A.R.
+#'   Hudson. 2018. North American Breeding Bird Survey Dataset 1966-2017,
+#'   version 2017.0. U.S. Geological Survey, Patuxent Wildlife Research Center.
+#'   \url{https://doi.org/10.5066/F76972V8}
 #' 
 #' @examples
+#' \dontrun{
+#' 
+#' # get from USGS ftp server
 #' routes <- bbs_meta_routes()
 #' 
+#' # get from local working directory
+#' routes <- bbs_meta_routes(bbs_dir = '.')
+#' }
 #' @export bbs_meta_routes
 bbs_meta_routes <- function(bbs_dir = NULL) {
   
@@ -40,10 +50,8 @@ bbs_meta_routes <- function(bbs_dir = NULL) {
     bbs_dir <- bbs_ftp()
   }
   
-  zip_path <- paste0(bbs_dir, "/routes.zip")
-  
   out <- csv_unzip(paste0(bbs_dir, "/routes.zip"))
-  names(out) <- tolower(names(out))
+  out$active <- as.logical(out$active)
   
   return(out)
 }

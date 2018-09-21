@@ -10,7 +10,7 @@ Description: Imports North American Breeding Bird Survey data from the USGS'
 URL: https://github.com/oharar/rBBS/
 BugReports: https://github.com/oharar/rBBS/issues
 Depends: R (>= 2.10)
-Imports: RCurl, plyr, readr
+Imports: utils, readr, tibble
 Encoding: UTF-8
 Suggests: testthat
 License: GPL-3

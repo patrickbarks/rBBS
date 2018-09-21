@@ -2,7 +2,8 @@
 % Please edit documentation in R/bbs_files_10.R
 \name{bbs_files_10}
 \alias{bbs_files_10}
-\title{Read BBS meta-data}
+\title{Get the names of state-specific zip files containing 10-stop count data from
+README.txt}
 \usage{
 bbs_files_10(bbs_dir = NULL)
 }
@@ -10,32 +11,28 @@ bbs_files_10(bbs_dir = NULL)
 \item{bbs_dir}{Directory from which to get data. Defaults to the USGS FTP
 directory for the most recent BBS release. May alternatively be a path to a
 local directory, or ftp address for an older BBS release.}
-
-\item{zip_files}{Logical: should the names of the zip files for the 10- and
-50-stop data be added? Defaults to FALSE.}
 }
 \value{
 \code{data.frame} with the following columns:
-  \item{state_name}{Name of state/province/territory}
-  \item{ten_stop_file}{Name of zip file with 10-stop survey data}
+  \item{state_name}{name of state/province/territory}
+  \item{ten_stop_file}{name of zip file with 10-stop survey data}
 }
 \description{
-Read in list of states/provinces/territories, and also names of zip files
-where the 10 stop data is kept.
+Get the names of state-specific zip files containing 10-stop count data from
+the BBS file \emph{README.txt}.
 }
 \details{
-This is meta-data collated from the full database. Note that not all
-  regions have a zip file: in particular, there is no Mexican data, or data
-  from Puerto Rico or Washington D.C.
+Note that not all regions have a zip file. As of 2017 there is no
+  data for Mexico, Puerto Rico, or Washington D.C.
 }
 \examples{
 
 }
 \references{
-Sauer, J. R., J. E. Hines, J. E. Fallon, K. L. Pardieck, D. J.
-  Ziolkowski, Jr., and W. A. Link. 2014. The North American Breeding Bird
-  Survey, Results and Analysis 1966 - 2012. Version 02.19.2014 USGS Patuxent
-  Wildlife Research Center, Laurel, MD
+Pardieck, K.L., D.J. Ziolkowski Jr., M. Lutmerding and M.-A.R.
+  Hudson. 2018. North American Breeding Bird Survey Dataset 1966-2017,
+  version 2017.0. U.S. Geological Survey, Patuxent Wildlife Research Center.
+  \url{https://doi.org/10.5066/F76972V8}
 }
 \author{
 Bob O'Hara

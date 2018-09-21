@@ -12,7 +12,7 @@ directory for the most recent BBS release. May alternatively be a path to a
 local directory, or ftp address for an older BBS release.}
 }
 \value{
-\code{data.frame} with the following columns:
+A \code{data.frame} with the following columns:
   \item{bcr}{Integer code for BCR}
   \item{bcr_name}{BCR name in English}
   \item{bcr_name_french}{BCR name in French}
@@ -24,14 +24,20 @@ American Breeding Bird Survey (BBS). This data comes from the BBS file
 'BCR.txt'.
 }
 \examples{
+\dontrun{
+
+# get from USGS ftp server
 bcr <- bbs_meta_bcr()
 
+# get from local working directory
+bcr <- bbs_meta_bcr(bbs_dir = '.')
+}
 }
 \references{
-Sauer, J. R., J. E. Hines, J. E. Fallon, K. L. Pardieck, D. J.
-  Ziolkowski, Jr., and W. A. Link. 2014. The North American Breeding Bird
-  Survey, Results and Analysis 1966 - 2012. Version 02.19.2014 USGS Patuxent
-  Wildlife Research Center, Laurel, MD
+Pardieck, K.L., D.J. Ziolkowski Jr., M. Lutmerding and M.-A.R.
+  Hudson. 2018. North American Breeding Bird Survey Dataset 1966-2017,
+  version 2017.0. U.S. Geological Survey, Patuxent Wildlife Research Center.
+  \url{https://doi.org/10.5066/F76972V8}
 }
 \author{
 Bob O'Hara

@@ -1,6 +1,6 @@
 #' Download North American Breeding Bird Survey data via FTP
 #' 
-#' Download North American Breeding Bird Survey data via FTP.
+#' Download North American Breeding Bird Survey (BBS) data via FTP.
 #'
 #' @param dest Path to an existing local directory to download files to.
 #' @param bbs_dir Directory from which to get data. Defaults to the USGS FTP
@@ -22,10 +22,10 @@
 #'   provinces/territories plus Montana and North Dakota.
 #' @author Bob O'Hara
 #' @author Patrick Barks <patrick.barks@@gmail.com>
-#' @references Sauer, J. R., J. E. Hines, J. E. Fallon, K. L. Pardieck, D. J.
-#'   Ziolkowski, Jr., and W. A. Link. 2014. The North American Breeding Bird
-#'   Survey, Results and Analysis 1966 - 2012. Version 02.19.2014 USGS Patuxent
-#'   Wildlife Research Center, Laurel, MD
+#' @references Pardieck, K.L., D.J. Ziolkowski Jr., M. Lutmerding and M.-A.R.
+#'   Hudson. 2018. North American Breeding Bird Survey Dataset 1966-2017,
+#'   version 2017.0. U.S. Geological Survey, Patuxent Wildlife Research Center.
+#'   \url{https://doi.org/10.5066/F76972V8}
 #'   
 #' @examples
 #' \dontrun{

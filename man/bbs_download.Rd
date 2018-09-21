@@ -28,7 +28,7 @@ Case-insensitive. See Details.}
 \code{FALSE}.}
 }
 \description{
-Download North American Breeding Bird Survey data via FTP.
+Download North American Breeding Bird Survey (BBS) data via FTP.
 }
 \details{
 Argument \code{stateprov} may include names of countries ('Canada'
@@ -52,10 +52,10 @@ bbs_download(dest = '~/bbs/', ten_stop = FALSE, fifty_stop = TRUE)
 
 }
 \references{
-Sauer, J. R., J. E. Hines, J. E. Fallon, K. L. Pardieck, D. J.
-  Ziolkowski, Jr., and W. A. Link. 2014. The North American Breeding Bird
-  Survey, Results and Analysis 1966 - 2012. Version 02.19.2014 USGS Patuxent
-  Wildlife Research Center, Laurel, MD
+Pardieck, K.L., D.J. Ziolkowski Jr., M. Lutmerding and M.-A.R.
+  Hudson. 2018. North American Breeding Bird Survey Dataset 1966-2017,
+  version 2017.0. U.S. Geological Survey, Patuxent Wildlife Research Center.
+  \url{https://doi.org/10.5066/F76972V8}
 }
 \author{
 Bob O'Hara

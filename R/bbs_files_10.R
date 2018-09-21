@@ -1,28 +1,26 @@
-#' Read BBS meta-data
+#' Get the names of state-specific zip files containing 10-stop count data from
+#' README.txt
 #'
-#' Read in list of states/provinces/territories, and also names of zip files
-#' where the 10 stop data is kept.
+#' Get the names of state-specific zip files containing 10-stop count data from
+#' the BBS file \emph{README.txt}.
 #'
 #' @param bbs_dir Directory from which to get data. Defaults to the USGS FTP
 #'   directory for the most recent BBS release. May alternatively be a path to a
 #'   local directory, or ftp address for an older BBS release.
-#' @param zip_files Logical: should the names of the zip files for the 10- and
-#'   50-stop data be added? Defaults to FALSE.
 #' 
 #' @return
 #' \code{data.frame} with the following columns:
-#'   \item{state_name}{Name of state/province/territory}
-#'   \item{ten_stop_file}{Name of zip file with 10-stop survey data}
+#'   \item{state_name}{name of state/province/territory}
+#'   \item{ten_stop_file}{name of zip file with 10-stop survey data}
 #' 
-#' @details This is meta-data collated from the full database. Note that not all
-#'   regions have a zip file: in particular, there is no Mexican data, or data
-#'   from Puerto Rico or Washington D.C.
+#' @details Note that not all regions have a zip file. As of 2017 there is no
+#'   data for Mexico, Puerto Rico, or Washington D.C.
 #' @author Bob O'Hara
 #' @author Patrick Barks <patrick.barks@@gmail.com>
-#' @references Sauer, J. R., J. E. Hines, J. E. Fallon, K. L. Pardieck, D. J.
-#'   Ziolkowski, Jr., and W. A. Link. 2014. The North American Breeding Bird
-#'   Survey, Results and Analysis 1966 - 2012. Version 02.19.2014 USGS Patuxent
-#'   Wildlife Research Center, Laurel, MD
+#' @references Pardieck, K.L., D.J. Ziolkowski Jr., M. Lutmerding and M.-A.R.
+#'   Hudson. 2018. North American Breeding Bird Survey Dataset 1966-2017,
+#'   version 2017.0. U.S. Geological Survey, Patuxent Wildlife Research Center.
+#'   \url{https://doi.org/10.5066/F76972V8}
 #' 
 #' @examples
 #' 
@@ -69,7 +67,7 @@ bbs_files_10 <- function(bbs_dir = NULL) {
   )
   
   # standardize state names
-  state_name <- bbs_stateprov(state_name)
+  state_name <- bbs_state(state_name)
   
   return(tibble(state_name, ten_stop_file))
 }

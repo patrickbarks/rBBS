@@ -2,7 +2,7 @@
 % Please edit documentation in R/bbs_meta_regions.R
 \name{bbs_meta_regions}
 \alias{bbs_meta_regions}
-\title{Read BBS meta-data}
+\title{Get state/province/territory metadata for North American Breeding Bird Survey}
 \usage{
 bbs_meta_regions(bbs_dir = NULL, zip_files = FALSE)
 }
@@ -11,35 +11,43 @@ bbs_meta_regions(bbs_dir = NULL, zip_files = FALSE)
 directory for the most recent BBS release. May alternatively be a path to a
 local directory, or ftp address for an older BBS release.}
 
-\item{zip_files}{Logical: should the names of the zip files for the 10- and
-50-stop data be added? Defaults to FALSE.}
+\item{zip_files}{Should the names of the zip files for the 10-stop? Defaults
+to FALSE.}
 }
 \value{
-\code{data.frame} with the following columns:
-  \item{country_num}{Integer code for country}
-  \item{country_name}{Name of country}
-  \item{state_num}{Integer code for state/province/territory}
-  \item{state_name}{Name of state/province/territory}
-  \item{ten_stop_file}{Name of zip file with 10-stop survey data}
+A \code{data.frame} with the following columns:
+  \item{country_num}{integer code for country}
+  \item{country_name}{name of country}
+  \item{state_num}{integer code for state/province/territory}
+  \item{state_name}{name of state/province/territory}
+  
+If \code{zip_files = TRUE}, also includes the column:
+  \item{ten_stop_file}{name of zip file with 10-stop survey data}
 }
 \description{
-Read in list of states/provinces/territories, and also names of zip files
-where the 10 stop data is kept.
+Get a data frame with the names and codes for states/provinces/territories
+used in North American Breeding Bird Survey (BBS), and optionally, the names
+of the corresponding zip files containing 10-stop count data.
 }
 \details{
-This is meta-data collated from the full database. Note that not all
-  regions have a zip file: in particular, there is no Mexican data, or data
-  from Puerto Rico or Washington D.C.
+Note that not all regions have a zip file. As of 2017 there is no
+  data for Mexico, Puerto Rico, or Washington D.C.
 }
 \examples{
+\dontrun{
+
+# get from USGS ftp server
 regions <- bbs_meta_regions()
 
+# get from local working directory
+regions <- bbs_meta_regions(bbs_dir = '.')
+}
 }
 \references{
-Sauer, J. R., J. E. Hines, J. E. Fallon, K. L. Pardieck, D. J.
-  Ziolkowski, Jr., and W. A. Link. 2014. The North American Breeding Bird
-  Survey, Results and Analysis 1966 - 2012. Version 02.19.2014 USGS Patuxent
-  Wildlife Research Center, Laurel, MD
+Pardieck, K.L., D.J. Ziolkowski Jr., M. Lutmerding and M.-A.R.
+  Hudson. 2018. North American Breeding Bird Survey Dataset 1966-2017,
+  version 2017.0. U.S. Geological Survey, Patuxent Wildlife Research Center.
+  \url{https://doi.org/10.5066/F76972V8}
 }
 \author{
 Bob O'Hara

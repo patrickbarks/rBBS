@@ -2,7 +2,7 @@
 % Please edit documentation in R/bbs_meta_strata.R
 \name{bbs_meta_strata}
 \alias{bbs_meta_strata}
-\title{Get geographic strata data for North American Breeding Bird Survey}
+\title{Get physiographic strata metadata for North American Breeding Bird Survey}
 \usage{
 bbs_meta_strata(bbs_dir = NULL)
 }
@@ -12,25 +12,32 @@ directory for the most recent BBS release. May alternatively be a path to a
 local directory, or ftp address for an older BBS release.}
 }
 \value{
-\code{data.frame} with the following columns:
-  \item{stratum}{Integer code for stratum}
-  \item{stratum_name}{Stratum name in English}
-  \item{stratum_name_french}{Stratum name in French}
-  \item{stratum_name_spanish}{Stratum name in Spanish}
+A \code{data.frame} with the following columns:
+  \item{stratum}{integer code for physiographic stratum}
+  \item{stratum_name}{name of stratum in English}
+  \item{stratum_name_french}{name of stratum in French}
+  \item{stratum_name_spanish}{name of stratum in Spanish}
 }
 \description{
-Get names and ID numbers of geographic strata in the North American Breeding
-Bird Survey (BBS). This data comes from the BBS file 'BBSStrata.txt'.
+Get a data frame with the names and codes of physiographic strata in the
+North American Breeding Bird Survey (BBS). This data comes from the BBS file
+\emph{BBSStrata.txt}.
 }
 \examples{
+\dontrun{
+
+# get from USGS ftp server
 strata <- bbs_meta_strata()
 
+# get from local working directory
+strata <- bbs_meta_strata(bbs_dir = '.')
+}
 }
 \references{
-Sauer, J. R., J. E. Hines, J. E. Fallon, K. L. Pardieck, D. J.
-  Ziolkowski, Jr., and W. A. Link. 2014. The North American Breeding Bird
-  Survey, Results and Analysis 1966 - 2012. Version 02.19.2014 USGS Patuxent
-  Wildlife Research Center, Laurel, MD
+Pardieck, K.L., D.J. Ziolkowski Jr., M. Lutmerding and M.-A.R.
+  Hudson. 2018. North American Breeding Bird Survey Dataset 1966-2017,
+  version 2017.0. U.S. Geological Survey, Patuxent Wildlife Research Center.
+  \url{https://doi.org/10.5066/F76972V8}
 }
 \author{
 Bob O'Hara

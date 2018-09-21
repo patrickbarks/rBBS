@@ -1,61 +1,68 @@
-#' Read in weather and other meta-data
+#' Get weather and environmental metadata for North American Breeding Bird
+#' Survey
 #' 
-#' Reads Weather meta-data in BBS, from Weather.zip. Contains other meta-data
-#' too, so is useful elsewhere
+#' Get a data frame with weather and environmental data from the North American
+#' Breeding Bird Survey (BBS). This data comes from the BBS file
+#' \emph{Weather.csv}. See also files \emph{WeatherInf.txt} and
+#' \emph{weathercodes.txt} for further details.
 #' 
 #' @param bbs_dir Directory from which to get data. Defaults to the USGS FTP
 #'   directory for the most recent BBS release. May alternatively be a path to a
 #'   local directory, or ftp address for an older BBS release.
 #'
 #' @return
-#' \code{data.frame} with the following columns:
-#'   \item{route_data_id}{Data identification number for unique combinations of
-#'   country_num, state, route, rpid, and year}
-#'   \item{country_num}{Three digit code that identifies country: 124 (Canada),
-#'   484 (Mexico), or 840 (USA)}
-#'   \item{state_num}{Two digit numerical code that identifies the state,
-#'   province, or territory}
-#'   \item{route}{Three digit code that identifies the route.}
-#'   \item{rpid}{The run protocol identification number.}
-#'   \item{year}{The year.}
-#'   \item{month}{The month the route was surveyed (1-12).}
-#'   \item{day}{The day the route was surveyed (1-31).}
-#'   \item{obs_n}{Unique observer identification number.}
-#'   \item{total_spp}{The total number of species recorded on that run of the
-#'   route.}
-#'   \item{start_temp}{The temperature recorded at the beginning of the run of
-#'   the route.}
-#'   \item{end_temp}{The temperature recorded at the end of the run of the
-#'   route.}
-#'   \item{temp_scale}{The scale in which the temperatures were recorded. F
-#'   stands for Fahrenheit; C stands for Celcius.}
-#'   \item{start_wind}{The Beaufort wind speed code recorded at the beginning of
-#'   the run of the route.}
-#'   \item{end_wind}{The Beaufort wind speed code recorded at the end of the run
-#'   of the route.}
-#'   \item{start_sky}{The Weather Bureau sky code recorded at the beginning of
-#'   the run of the route.}
-#'   \item{end_sky}{The Weather Bureau sky code recorded at the end of the run
-#'   of the route.}
-#'   \item{start_time}{The time the run of the route began, recorded in 24 hour
-#'   local time.}
-#'   \item{end_time}{The time the run of the route ended, recorded in 24 hour
-#'   local time.}
-#'   \item{assistant}{Did someone assist? 1 if they did, otherwise 0.}
-#'   \item{run_type}{If this run is acceptable by BBS standards, then 1,
-#'   otherwise 0.}
+#' A \code{data.frame} with the following columns:
+#'   \item{route_data_id}{integer code for unique combinations of country_num,
+#'   state, route, rpid, and year}
+#'   \item{country_num}{integer code for country: 124 (Canada), 484 (Mexico),
+#'   840 (United States)}
+#'   \item{state_num}{integer code for state/province/territory}
+#'   \item{route}{integer code for route (unique within states)}
+#'   \item{rpid}{integer code for Run Protocol ID (see BBS file
+#'   \emph{RunProtocolID.txt})}
+#'   \item{year}{integer survey year}
+#'   \item{month}{integer survey month (1-12)}
+#'   \item{day}{integer survey day (1-31)}
+#'   \item{obs_n}{integer identification code for human observer}
+#'   \item{total_spp}{total number of species recorded on that run of the route}
+#'   \item{start_temp}{temperature recorded at the beginning of the run of the
+#'   route}
+#'   \item{end_temp}{temperature recorded at the end of the run of the route}
+#'   \item{temp_scale}{scale in which the temperature was recorded: F
+#'   (Fahrenheit), C (Celcius)}
+#'   \item{start_wind}{Beaufort wind speed code recorded at the beginning of the
+#'   run of the route (see BBS file \emph{weathercodes.txt})}
+#'   \item{end_wind}{Beaufort wind speed code recorded at the end of the run of
+#'   the route (see BBS file \emph{weathercodes.txt})}
+#'   \item{start_sky}{Weather Bureau sky code recorded at the beginning of the
+#'   run of the route (see BBS file \emph{weathercodes.txt})}
+#'   \item{end_sky}{Weather Bureau sky code recorded at the end of the run of
+#'   the route (see BBS file \emph{weathercodes.txt})}
+#'   \item{start_time}{time the run of the route began (in 24 hour local time)}
+#'   \item{end_time}{time the run of the route ended (in 24 hour local time)}
+#'   \item{assistant}{logical indicating whether another person assisted}
+#'   \item{quality_current_id}{logical indicating whether the run took place
+#'   under suitable weather conditions, and within suitable time, date, and
+#'   route completion criteria (see BBS file \emph{WeatherInf.txt})}
+#'   \item{run_type}{logical indicating whether the run is acceptable by BBS
+#'   standards (see BBS file \emph{runtype.pdf})}
 #' 
-#' @details See 'bbs_dir/WeatherInf.txt' for documentation.
 #' @author Bob O'Hara
 #' @author Patrick Barks <patrick.barks@@gmail.com>
-#' @references Sauer, J. R., J. E. Hines, J. E. Fallon, K. L. Pardieck, D. J.
-#'   Ziolkowski, Jr., and W. A. Link. 2014. The North American Breeding Bird
-#'   Survey, Results and Analysis 1966 - 2012. Version 02.19.2014 USGS Patuxent
-#'   Wildlife Research Center, Laurel, MD
+#' @references Pardieck, K.L., D.J. Ziolkowski Jr., M. Lutmerding and M.-A.R.
+#'   Hudson. 2018. North American Breeding Bird Survey Dataset 1966-2017,
+#'   version 2017.0. U.S. Geological Survey, Patuxent Wildlife Research Center.
+#'   \url{https://doi.org/10.5066/F76972V8}
 #'
 #' @examples
+#' \dontrun{
+#' 
+#' # get from USGS ftp server
 #' weather <- bbs_meta_weather()
 #' 
+#' # get from local working directory
+#' weather <- bbs_meta_weather(bbs_dir = '.')
+#' }
 #' @export bbs_meta_weather
 bbs_meta_weather <- function(bbs_dir = NULL) {
   
@@ -64,9 +71,13 @@ bbs_meta_weather <- function(bbs_dir = NULL) {
   }
   
   out <- csv_unzip(paste0(bbs_dir, "/Weather.zip"))
-  names(out) <- tolower(names(out))
   out$state_num <- as.integer(out$state_num)
   out$route <- as.integer(out$route)
+  out$assistant <- as.logical(out$assistant)
+  out$run_type <- as.logical(out$run_type)
+  if ('quality_current_id' %in% names(out)) { # column only in newer releases
+    out$quality_current_id <- as.logical(out$quality_current_id)
+  }
   
   return(out)
 }
