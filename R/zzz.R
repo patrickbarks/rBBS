@@ -16,10 +16,34 @@ bbs_read_dir <- function(dir) {
 }
 
 
+#' @importFrom utils download.file
+#' @noRd
+bbs_download_util <- function(bbs_dir, dest, subdir, dl_files, overwrite,
+                              verbose) {
+  
+  no_overwrite <- character(0)
+  
+  for(i in 1:length(dl_files)) {
+    if (overwrite == FALSE & file.exists(paste0(dest, subdir, dl_files[i]))) {
+      no_overwrite <- append(no_overwrite, dl_files[i])
+    } else {
+      download.file(paste0(bbs_dir, subdir, dl_files[i]),
+                    paste0(dest, subdir, dl_files[i]))
+    }
+  }
+  
+  if (verbose == TRUE & length(no_overwrite) > 0) {
+    message(paste0('The following files already exist and were not ',
+                   're-downloaded:\n', paste(no_overwrite, collapse = ', ')),
+            appendLF = TRUE)
+  }
+}
+
+
 
 #' @importFrom utils download.file
 #' @importFrom readr read_csv
-#' @export csv_unzip
+#' @noRd
 csv_unzip <- function(zip_path) {
   
   zip_path_split <- strsplit(zip_path, '/+')[[1]]
