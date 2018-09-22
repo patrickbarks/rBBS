@@ -4,8 +4,8 @@
 #'
 #' @param bbs_dir Local directory from which to load BBS data.
 #'
-#'   Must be an existing directory with the same structure as the USGS BBS
-#'   directory (ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/).
+#' Must be an existing directory with the same structure as the USGS BBS
+#' directory (ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/).
 #'   
 #' @return
 #' A \code{data.frame} with the following columns:
@@ -31,6 +31,10 @@
 #'   \url{https://doi.org/10.5066/F76972V8}
 #'   
 #' @examples
+#' \dontrun{
+#' 
+#' bbs_50 <- bbs_build_50(bbs_dir = '.')
+#' }
 #' 
 #' @export bbs_build_50
 bbs_build_50 <- function(bbs_dir) {

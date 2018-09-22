@@ -9,8 +9,8 @@ bbs_build_50(bbs_dir)
 \arguments{
 \item{bbs_dir}{Local directory from which to load BBS data.
 
-  Must be an existing directory with the same structure as the USGS BBS
-  directory (ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/).}
+Must be an existing directory with the same structure as the USGS BBS
+directory (ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/).}
 }
 \value{
 A \code{data.frame} with the following columns:
@@ -32,6 +32,10 @@ A \code{data.frame} with the following columns:
 Assemble North American Breeding Bird Survey (BBS) 50-stop count data
 }
 \examples{
+\dontrun{
+
+bbs_50 <- bbs_build_50(bbs_dir = '.')
+}
 
 }
 \references{
