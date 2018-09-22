@@ -17,3 +17,24 @@ df <- data.frame(file = ts_files, stringsAsFactors = F)
 # write to sysdata
 ts_df <- read.csv('data-raw/ten-stop-files.csv', stringsAsFactors = FALSE)
 devtools::use_data(ts_df, overwrite = TRUE, internal = TRUE)
+
+
+
+
+# subset weather data for tests
+bbs_dir <- '~/bbs_data/'
+wx <- bbs_meta_weather(bbs_dir = bbs_dir)
+regions <- bbs_meta_regions(bbs_dir = bbs_dir)
+regions[regions$country_name == 'Canada',]
+
+# subset to Nunavut and NWT
+wx <- wx[wx$state_num %in% c(43, 62),]
+
+setwd('inst/testdata/')
+write.csv(wx, 'weather.csv', row.names = FALSE)
+
+zip('Weather.zip', 'weather.csv')
+file.remove('weather.csv')
+setwd('../../')
+
+
