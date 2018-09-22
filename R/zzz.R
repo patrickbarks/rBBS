@@ -40,7 +40,7 @@ bbs_download_util <- function(bbs_dir, dest, subdir, dl_files, overwrite,
 }
 
 
-
+#' @importFrom utils unzip
 #' @importFrom utils download.file
 #' @importFrom readr read_csv
 #' @noRd
