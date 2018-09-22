@@ -37,7 +37,7 @@
 #' arguments (or the whole dataset if no subset arguments given).
 #'
 #' 2. Find every unique species (aou) that was recorded on those
-#' route-year-rpid.
+#' route-year-rpid (subject to aou subset argument, if given).
 #'
 #' 3. Create a data frame with every combination of those route-year-rpid and
 #' aou, and merge with the non-zero count data. Any route-year-rpid-aou rows
