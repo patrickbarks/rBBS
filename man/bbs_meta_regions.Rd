@@ -11,7 +11,7 @@ bbs_meta_regions(bbs_dir = NULL, zip_files = FALSE)
 directory for the most recent BBS release. May alternatively be a path to a
 local directory, or ftp address for an older BBS release.}
 
-\item{zip_files}{Should the names of the zip files for the 10-stop? Defaults
+\item{zip_files}{Include names of zip files containing 10-stop data? Defaults
 to FALSE.}
 }
 \value{
@@ -22,7 +22,8 @@ A \code{data.frame} with the following columns:
   \item{state_name}{name of state/province/territory}
   
 If \code{zip_files = TRUE}, also includes the column:
-  \item{ten_stop_file}{name of zip file with 10-stop survey data}
+  \item{ten_stop_file}{name of zip file with 10-stop survey data (or
+  \code{NA} if region does not have a zip file)}
 }
 \description{
 Get a data frame with the names and codes for states/provinces/territories

@@ -7,7 +7,7 @@
 #' @param bbs_dir Directory from which to get data. Defaults to the USGS FTP
 #'   directory for the most recent BBS release. May alternatively be a path to a
 #'   local directory, or ftp address for an older BBS release.
-#' @param zip_files Should the names of the zip files for the 10-stop? Defaults
+#' @param zip_files Include names of zip files containing 10-stop data? Defaults
 #'   to FALSE.
 #' 
 #' @return
@@ -18,7 +18,8 @@
 #'   \item{state_name}{name of state/province/territory}
 #'   
 #' If \code{zip_files = TRUE}, also includes the column:
-#'   \item{ten_stop_file}{name of zip file with 10-stop survey data}
+#'   \item{ten_stop_file}{name of zip file with 10-stop survey data (or
+#'   \code{NA} if region does not have a zip file)}
 #' 
 #' @details Note that not all regions have a zip file. As of 2017 there is no
 #'   data for Mexico, Puerto Rico, or Washington D.C.

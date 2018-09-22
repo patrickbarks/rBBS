@@ -2,7 +2,7 @@
 % Please edit documentation in R/bbs_meta_bcr.R
 \name{bbs_meta_bcr}
 \alias{bbs_meta_bcr}
-\title{Get Bird Conservation Region data from North American Breeding Bird Survey}
+\title{Get Bird Conservation Region metadata for North American Breeding Bird Survey}
 \usage{
 bbs_meta_bcr(bbs_dir = NULL)
 }
@@ -13,15 +13,15 @@ local directory, or ftp address for an older BBS release.}
 }
 \value{
 A \code{data.frame} with the following columns:
-  \item{bcr}{Integer code for BCR}
-  \item{bcr_name}{BCR name in English}
-  \item{bcr_name_french}{BCR name in French}
-  \item{bcr_name_spanish}{BCR name in Spanish}
+  \item{bcr}{integer code for BCR}
+  \item{bcr_name}{name of BCR in English}
+  \item{bcr_name_french}{name of BCR in French}
+  \item{bcr_name_spanish}{name of BCR in Spanish}
 }
 \description{
-Get names and ID numbers of Bird Conservation Regions (BCRs) from the North
+Get names and codes of Bird Conservation Regions (BCRs) from the North
 American Breeding Bird Survey (BBS). This data comes from the BBS file
-'BCR.txt'.
+\emph{BCR.txt}.
 }
 \examples{
 \dontrun{

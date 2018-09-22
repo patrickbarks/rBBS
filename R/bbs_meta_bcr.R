@@ -1,8 +1,8 @@
-#' Get Bird Conservation Region data from North American Breeding Bird Survey
+#' Get Bird Conservation Region metadata for North American Breeding Bird Survey
 #' 
-#' Get names and ID numbers of Bird Conservation Regions (BCRs) from the North
+#' Get names and codes of Bird Conservation Regions (BCRs) from the North
 #' American Breeding Bird Survey (BBS). This data comes from the BBS file
-#' 'BCR.txt'.
+#' \emph{BCR.txt}.
 #'
 #' @param bbs_dir Directory from which to get data. Defaults to the USGS FTP
 #'   directory for the most recent BBS release. May alternatively be a path to a
@@ -10,10 +10,10 @@
 #'
 #' @return
 #' A \code{data.frame} with the following columns:
-#'   \item{bcr}{Integer code for BCR}
-#'   \item{bcr_name}{BCR name in English}
-#'   \item{bcr_name_french}{BCR name in French}
-#'   \item{bcr_name_spanish}{BCR name in Spanish}
+#'   \item{bcr}{integer code for BCR}
+#'   \item{bcr_name}{name of BCR in English}
+#'   \item{bcr_name_french}{name of BCR in French}
+#'   \item{bcr_name_spanish}{name of BCR in Spanish}
 #' 
 #' @author Bob O'Hara
 #' @author Patrick Barks <patrick.barks@@gmail.com>
