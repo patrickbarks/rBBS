@@ -5,98 +5,103 @@
 rBBS
 ====
 
-R package to import USGS' BBS data into R
+An R package to work with data from the North American Breeding Bird Survey (BBS).
+
+The BBS is a cooperative effort between the United States Geological Survey (USGS) and Environment and Climate Change Canada's Canadian Wildlife Service (CWS). See more information at <https://www.pwrc.usgs.gov/bbs/>, and see also the terms of use for BBS data at <https://www.pwrc.usgs.gov/BBS/RawData/>.
 
 Installation
 ------------
 
-At the moment, the package is only available on GitHub, so can be installed like this:
+Install the development version from GitHub with:
 
 ``` r
-devtools::install_github("oharar/rBBS")
+# install.packages("devtools")
+devtools::install_github("patrickbarks/rBBS")
+```
+
+Usage
+-----
+
+To work with BBS data we first need to download it from the USGS ftp server. This can be done manually following the links at <https://www.pwrc.usgs.gov/bbs/>, or by using the function `bbs_download`:
+
+``` r
 library("rBBS")
+
+# download to local directory (e.g. '.' gives the current working directory)
+bbs_download(dest = '.', countries = 'United States')
+```
+
+With the data downloaded, we can build metadata tables using the `bbs_meta_*` functions
+
+``` r
+bcr <- bbs_meta_bcr(bbs_dir = '.')
+strata <- bbs_meta_strata(bbs_dir = '.')
+regions <- bbs_meta_regions(bbs_dir = '.')
+routes <- bbs_meta_routes(bbs_dir = '.')
+species <- bbs_meta_species(bbs_dir = '.')
+weather <- bbs_meta_weather(bbs_dir = '.')
+```
+
+or build tables with bird-count data using the `bbs_build_*` functions, e.g.
+
+``` r
+bbs_10 <- bbs_build_10(bbs_dir = '.', countries = 'United States')
+```
+
+The original BBS data does not include counts of zero (i.e. instances where a species was not observed on a given route), but these can be built in by setting `zeros = TRUE` in the `bbs_build_*` functions.
+
+However, note that the full BBS dataset *with* zeros includes more than 92 million rows, which requires some time to build and a few GB of memory. It's therefore a good idea to subset to the species, years, or locations of interest within the call to `bbs_build_*`, e.g.
+
+``` r
+bbs_10 <- bbs_build_10(bbs_dir = '.', zeros = TRUE,
+                       states = c('Washington', 'Oregon', 'California'))
 ```
 
 Example
 -------
 
-The package is intended to extract abundance/incidence data from the BBS data. In practice, it is worth downloading a local copy from the ftp server, as this will speed up reading the data.
-
-We can start by searching for teh speciew we are intersted in. There is a GetSpNames() function to get a data table of species IDs (including French and Spanish names). We can look for what Americans call the English Sparrow. It is listed as the House Sparrow (which is what the English Sparrow is called in England).
+Let's say we're interested in the distribution of the Western Meadowlark within the United States. We can find its American Ornithological Union species code (aou) in the metadata table `species` using
 
 ``` r
-library(rBBS)
-
-RegionMetaData <- GetRegions()
-RoutesMetaData <- GetRoutes()
-WeatherMetaData <- GetWeather()
-
-Species <- GetSpNames()
-Species[grep("^House", Species$English_Common_Name),
-        c("AOU", "English_Common_Name", "Genus", "Species")]
-#>     AOU English_Common_Name       Genus    Species
-#> 519 721          House Wren Troglodytes      aedon
-#> 730 519         House Finch  Haemorhous  mexicanus
-#> 745 688       House Sparrow      Passer domesticus
+species[grep('Meadowlark', species$english_common_name),]
+# aou for the Western Meadowlark is 5011
 ```
 
-We can see that the AOU code is 6882. So now we can search the database for the species (840 is the country number for USA, 1980 is just a convenient date to use):
+Now we can build a table with the 10-stop count data (including zeros) for the Western Meadowlark
 
 ``` r
-HouseSparrowInUSA <- GetRouteData(AOU=6882, countrynum = 840, year = 1980, 
-                                   weather = WeatherMetaData, routes = RoutesMetaData)
+bbs_wm <- bbs_build_10(bbs_dir = '.', zeros = TRUE,
+                       countries = 'United States', aou = 5011)
 ```
 
-Using Zeroes=TRUE means that we include locations that were surveyed but where the species was not observed. We can thus plot where the house (sorry, English) sparrow was observed on a map:
+Next, we'll summarize the occurrence of the Western Meadowlark by route (unique combinations of `country_num` x `state_num` x `route`). We'll calculate 'occurrence' simply as any instance of `species_total > 0` on a given route.
 
 ``` r
-library(maps)
-map('state')
-points(HouseSparrowInUSA$Longitude[is.na(HouseSparrowInUSA$stoptotal)], 
-       HouseSparrowInUSA$Latitude[is.na(HouseSparrowInUSA$stoptotal)], 
-       cex=0.3, pch=16, col="hotpink")
-points(HouseSparrowInUSA$Longitude[!is.na(HouseSparrowInUSA$stoptotal)], 
-       HouseSparrowInUSA$Latitude[!is.na(HouseSparrowInUSA$stoptotal)], 
-       cex=0.4, pch=16, col="blue")
-legend(-120, 30, c("Absent", "Observed"), pch=15, col=c("hotpink", "blue"))
+library(dplyr)
+
+bbs_wm_occur <- bbs_wm %>% 
+  filter(state_num != 3) %>% # remove Alaska
+  group_by(country_num, state_num, route) %>% 
+  summarize(occur = ifelse(any(species_total > 0), TRUE, FALSE)) %>% 
+  ungroup() %>% 
+  left_join(routes) # join to routes metadata which includes route coordinates
 ```
 
-![](README-unnamed-chunk-5-1.png)
-
-So we can see that the species was present throughout the Lower 48 states of the US, except possibly Nevada (which is probably because only 2 routes were sampled). We can look at this in more detail ,and see that indeed there was a lack of sampling in the early 1980s in Nevada, but with more routes, the house sparrow was seen:
+And finally, we'll use `ggplot2` to overlay the occurrence data on a map of the United States.
 
 ``` r
-NevadaCode <- RegionMetaData$RegionCode[RegionMetaData$`State/Prov/TerrName` == "NEVADA"]
-NevadaYears <- 1970:2015
-HSInNevada <- GetRouteData(AOU = 6882, countrynum = 840, 
-                                     states = NevadaCode, year = NevadaYears, Zeroes = TRUE)
+library(ggplot2)
+states <- map_data("state")
 
-NevadaSumm <- data.frame(Year = NevadaYears, 
-                        Routes = tapply(HSInNevada$stoptotal, list(HSInNevada$Year), length),
-                        NObs = tapply(HSInNevada$stoptotal, list(HSInNevada$Year), 
-                                      function(dat) sum(!is.na(dat))))
-
-par(mar=c(4.1,4.1,1,1))
-plot(NevadaSumm$Year, NevadaSumm$Routes, type="l", col="hotpink", ylim=c(0,max(NevadaSumm$Routes)), 
-     yaxt="n", xlab="Year", ylab="Number of routes")
-lines(NevadaSumm$Year, NevadaSumm$NObs, type="l", col="blue")
-legend(1992, 90, c("Total", "Routes with house sparrows"), 
-       lty=1, col=c("hotpink", "blue"))
-axis(2, las=1)
+ggplot(states) + 
+  geom_polygon(aes(long, lat, group = group), fill = 'grey80') +
+  geom_point(data = bbs_wm_occur, aes(longitude, latitude, col = occur), size = 2) +
+  scale_color_brewer(palette = 'Set1', name = 'Observed')
 ```
 
-![](README-unnamed-chunk-6-1.png)
+![](man/img/map.png)
 
 Contributions
 -------------
 
-AllContributions are welcome. Please note that this project is released with a [Contributor Code of Conduct](CONDUCT.md). By participating in this project you agree to abide by its terms.
-
-To Do
------
-
--   write code to import migrant/non-breeder data
--   write code to import noise data
--   check route & weather data are useable in their own right
--   document SpCodes
--   sort out non-ASCII characters Once that's done, improve functionality, stability etc.
+All contributions are welcome. Please note that this project is released with a [Contributor Code of Conduct](CONDUCT.md). By participating in this project you agree to abide by its terms.
