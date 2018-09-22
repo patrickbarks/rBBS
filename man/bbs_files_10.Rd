@@ -13,7 +13,7 @@ directory for the most recent BBS release. May alternatively be a path to a
 local directory, or ftp address for an older BBS release.}
 }
 \value{
-\code{data.frame} with the following columns:
+A \code{data.frame} with the following columns:
   \item{state_name}{name of state/province/territory}
   \item{ten_stop_file}{name of zip file with 10-stop survey data}
 }
@@ -24,9 +24,6 @@ the BBS file \emph{README.txt}.
 \details{
 Note that not all regions have a zip file. As of 2017 there is no
   data for Mexico, Puerto Rico, or Washington D.C.
-}
-\examples{
-
 }
 \references{
 Pardieck, K.L., D.J. Ziolkowski Jr., M. Lutmerding and M.-A.R.

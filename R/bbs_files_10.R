@@ -9,7 +9,7 @@
 #'   local directory, or ftp address for an older BBS release.
 #' 
 #' @return
-#' \code{data.frame} with the following columns:
+#' A \code{data.frame} with the following columns:
 #'   \item{state_name}{name of state/province/territory}
 #'   \item{ten_stop_file}{name of zip file with 10-stop survey data}
 #' 
@@ -21,8 +21,6 @@
 #'   Hudson. 2018. North American Breeding Bird Survey Dataset 1966-2017,
 #'   version 2017.0. U.S. Geological Survey, Patuxent Wildlife Research Center.
 #'   \url{https://doi.org/10.5066/F76972V8}
-#' 
-#' @examples
 #' 
 #' @importFrom tibble tibble
 #' @export bbs_files_10
