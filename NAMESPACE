@@ -3,7 +3,6 @@
 export(bbs_build_10)
 export(bbs_build_50)
 export(bbs_download)
-export(bbs_files_10)
 export(bbs_meta_bcr)
 export(bbs_meta_regions)
 export(bbs_meta_routes)
