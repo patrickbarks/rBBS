@@ -18,10 +18,31 @@ knitr::opts_chunk$set(
 An R package to work with data from the North American Breeding Bird Survey
 (BBS).
 
+The BBS is a large-scale bird monitoring program that was initiated in 1966 and
+currently encompasses over 4,600 active survey routes within North America. Each
+survey involves 50 three-minute point counts conducted at half-mile intervals
+along a 24.5-mile route. Surveys are conducted by skilled volunteers during the
+height of the breeding season.
+
 The BBS is a cooperative effort between the United States Geological Survey
 (USGS) and Environment and Climate Change Canada's Canadian Wildlife Service
 (CWS). See more information at https://www.pwrc.usgs.gov/bbs/, and see also the
 terms of use for BBS data at https://www.pwrc.usgs.gov/BBS/RawData/.
+
+## BBS datasets
+
+The BBS provides two main datasets (plus a variety of metadata tables):
+
+##### 50-stop data
+
+* includes bird counts for each of the 50 stops on a given survey
+* only consistently available from 1997 onward
+
+##### 10-stop data
+
+* bird counts binned into groups of 10 stops (i.e. stops 1-10, 11-20, ..., 41-50)
+* consistently available for all survey years
+
 
 ## Installation
 
@@ -32,7 +53,10 @@ Install the development version from GitHub with:
 devtools::install_github("patrickbarks/rBBS")
 ```
 
+
 ## Usage
+
+#### Download data
 
 To work with BBS data we first need to download it from the USGS ftp server.
 This can be done manually following the links at https://www.pwrc.usgs.gov/bbs/,
@@ -42,14 +66,18 @@ or by using the function `bbs_download`:
 library("rBBS")
 
 # download to local directory (e.g. '.' gives the current working directory)
-bbs_download(dest = '.', countries = 'United States')
+bbs_download(dest = '.')
 ```
 
-With the data downloaded, we can build metadata tables using the `bbs_meta_*`
-functions
+The default download options retrieve all metadata files and all 10-stop data.
+The 50-stop data can be downloaded by adding the argument `fifty_stop = TRUE` to
+the line above.
+
+#### Build metadata tables
+
+Metadata tables can be built using the `bbs_meta_*` functions:
 
 ```{r, eval=FALSE}
-bcr <- bbs_meta_bcr(bbs_dir = '.')
 strata <- bbs_meta_strata(bbs_dir = '.')
 regions <- bbs_meta_regions(bbs_dir = '.')
 routes <- bbs_meta_routes(bbs_dir = '.')
@@ -57,18 +85,23 @@ species <- bbs_meta_species(bbs_dir = '.')
 weather <- bbs_meta_weather(bbs_dir = '.')
 ```
 
-or build tables with bird-count data using the `bbs_build_*` functions, e.g.
+#### Build bird count tables
+
+Tables with bird-count data can be built using the `bbs_build_*` functions:
 
 ```{r, eval=FALSE}
-bbs_10 <- bbs_build_10(bbs_dir = '.', countries = 'United States')
+bbs_10 <- bbs_build_10(bbs_dir = '.') # 10-stop data
+bbs_50 <- bbs_build_50(bbs_dir = '.') # 50-stop data
 ```
+
+##### Build in counts of zero
 
 The original BBS data does not include counts of zero (i.e. instances where a
 species was not observed on a given route), but these can be built in by setting
 `zeros = TRUE` in the `bbs_build_*` functions.
 
-However, note that the full BBS dataset _with_ zeros includes more than 92
-million rows, which requires some time to build and a few GB of memory. It's
+However, note that the full dataset _with_ zeros includes more than 92 million
+rows, which requires some time to build and a few gigabytes of memory. It's
 therefore a good idea to subset to the species, years, or locations of interest
 within the call to `bbs_build_*`, e.g.
 
@@ -77,14 +110,15 @@ bbs_10 <- bbs_build_10(bbs_dir = '.', zeros = TRUE,
                        states = c('Washington', 'Oregon', 'California'))
 ```
 
+
 ## Example
 
 Let's say we're interested in the distribution of the Western Meadowlark within
 the United States. We can find its American Ornithological Union species code
-(aou) in the metadata table `species` using
+(aou) in the metadata table `species`:
 
 ```{r, eval=FALSE}
-species[grep('Meadowlark', species$english_common_name),]
+species$aou[species$english_common_name == 'Western Meadowlark']
 # aou for the Western Meadowlark is 5011
 ```
 
@@ -98,7 +132,7 @@ bbs_wm <- bbs_build_10(bbs_dir = '.', zeros = TRUE,
 
 Next, we'll summarize the occurrence of the Western Meadowlark by route (unique
 combinations of `country_num` x `state_num` x `route`). We'll calculate
-'occurrence' simply as any instance of `species_total > 0` on a given route.
+occurrence simply as any instance of `species_total > 0` on a given route.
 
 ```{r, eval=FALSE}
 library(dplyr)
@@ -111,8 +145,7 @@ bbs_wm_occur <- bbs_wm %>%
   left_join(routes) # join to routes metadata which includes route coordinates
 ```
 
-And finally, we'll use `ggplot2` to overlay the occurrence data on a map of the
-United States.
+And finally, we'll plot the occurrence data on a map of the United States.
 
 ```{r, eval=FALSE}
 library(ggplot2)
