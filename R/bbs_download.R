@@ -63,7 +63,6 @@ bbs_download <- function(dest, bbs_dir = NULL, countries = NULL, states = NULL,
                          meta = TRUE, ten_stop = TRUE, fifty_stop = FALSE,
                          migrant = FALSE, overwrite = FALSE, verbose = TRUE) {
   
-  # validate inputs
   # check whether R build has libcurl capability
   if (capabilities("libcurl") == FALSE) {
     stop('This function requires libcurl capability')
@@ -76,8 +75,8 @@ bbs_download <- function(dest, bbs_dir = NULL, countries = NULL, states = NULL,
   # check whether countries argument valid
   if (!is.null(countries)) {
     
-    if (!all(tolower(countries) %in% ts_df$country)) {
-      countries_inv <- states[!tolower(countries) %in% ts_df$country]
+    if (!all(tolower(countries) %in% df_zip$country)) {
+      countries_inv <- states[!tolower(countries) %in% df_zip$country]
       stop(paste('The following countries could not be found:',
                  paste(countries_inv, collapse = ', ')))
     }
@@ -85,8 +84,8 @@ bbs_download <- function(dest, bbs_dir = NULL, countries = NULL, states = NULL,
   # check whether states argument valid
   if (!is.null(states)) {
     
-    if (!all(tolower(states) %in% ts_df$stateprov)) {
-      states_inv <- states[!tolower(states) %in% ts_df$stateprov]
+    if (!all(tolower(states) %in% df_zip$state_name)) {
+      states_inv <- states[!tolower(states) %in% df_zip$state_name]
       stop(paste('The following states could not be found:',
                  paste(states_inv, collapse = ', ')))
     }
@@ -97,10 +96,6 @@ bbs_download <- function(dest, bbs_dir = NULL, countries = NULL, states = NULL,
     bbs_dir <- bbs_ftp()
   }
   
-  # append slash to dest and bbs_dir, for good measure
-  dest <- paste0(dest, '/')
-  bbs_dir <- paste0(bbs_dir, '/')
-  
   ## download top-level metadata files
   if (meta == TRUE) {
     tl_files <- bbs_read_dir(bbs_dir)
@@ -109,58 +104,59 @@ bbs_download <- function(dest, bbs_dir = NULL, countries = NULL, states = NULL,
                       overwrite = overwrite, verbose = verbose)
   }
   
-  ## download 10-stop files (by stateprov)
-  if (ten_stop == TRUE) {
+  ## download 10- and 50-stop data
+  if (ten_stop == TRUE | fifty_stop == TRUE) {
     
-    # create <dest>/States/ directory if necessary
-    if (!dir.exists(paste0(dest, 'States'))) {
-      dir.create(paste0(dest, 'States'))
+    # geographic subset
+    if (!is.null(countries) | !is.null(states)) {
+      zip_use <- df_zip
+      zip_use$use <- FALSE
+      
+      if (!is.null(countries)) {
+        zip_use$use[zip_use$country_name %in% tolower(countries)] <- TRUE
+      }
+      if (!is.null(states)) {
+        zip_use$use[zip_use$state_name %in% tolower(states)] <- TRUE
+      }
+      zip_use <- zip_use[zip_use$use == TRUE,]
     }
     
-    ts_dir <- '/States/'
-    ts_files <- bbs_read_dir(paste0(bbs_dir, ts_dir))
-    
-    # empty sets
-    ts_files_c <- character(0)
-    ts_files_s <- character(0)
-    
-    # subset to regions of interest
-    if (!is.null(states)) {
+    ## download 10-stop files (by state)
+    if (ten_stop == TRUE) {
       
-      # if states includes full countries
-      if (any(tolower(states) %in% unique(ts_df$country))) {
-        ts_files_c <- ts_df$file[ts_df$country %in% tolower(states)]
+      ts_dir <- 'States/'
+      
+      if (!dir.exists(paste(dest, ts_dir, sep = '/'))) {
+        dir.create(paste(dest, ts_dir, sep = '/'))
       }
       
-      # if states includes states
-      if (any(tolower(states) %in% ts_df$stateprov)) {
-        ts_files_s <- ts_df$file[ts_df$stateprov %in% tolower(states)]
+      ts_files <- bbs_read_dir(paste(bbs_dir, ts_dir, sep = '/'))
+      
+      if (!is.null(countries) | !is.null(states)) {
+        ts_files <- ts_files[ts_files %in% zip_use$file_10]
       }
       
-      # full list of ts_files to get
-      ts_files <- c(ts_files_c, ts_files_s)
+      bbs_download_util(bbs_dir, dest, subdir = ts_dir, dl_files = ts_files,
+                        overwrite = overwrite, verbose = verbose)
     }
     
-    # download 10-stop files
-    bbs_download_util(bbs_dir, dest, subdir = ts_dir, dl_files = ts_files,
-                      overwrite = overwrite, verbose = verbose)
-  }
-  
-  ## download 50-stop files
-  if (fifty_stop == TRUE) {
-    
-    # create <dest>/ directories if necessary
-    if (!dir.exists(paste0(dest, '50-StopData'))) {
-      dir.create(paste0(dest, '50-StopData'))
+    ## download 50-stop files
+    if (fifty_stop == TRUE) {
+      
+      fs_dir <- '50-StopData/1997ToPresent_SurveyWide/'
+      
+      if (!dir.exists(paste(dest, fs_dir, sep = '/'))) {
+        dir.create(paste(dest, fs_dir, sep = '/'), recursive = TRUE)
+      }
+      
+      fs_files <- bbs_read_dir(paste(bbs_dir, fs_dir, sep = '/'))
+      
+      if (!is.null(countries) | !is.null(states)) {
+        fs_files <- fs_files[fs_files %in% zip_use$file_50]
+      }
+      
+      bbs_download_util(bbs_dir, dest, subdir = fs_dir, dl_files = fs_files,
+                        overwrite = overwrite, verbose = verbose)
     }
-    if (!dir.exists(paste0(dest, '50-StopData/1997ToPresent_SurveyWide'))) {
-      dir.create(paste0(dest, '50-StopData/1997ToPresent_SurveyWide'))
-    }
-    
-    fs_dir <- '50-StopData/1997ToPresent_SurveyWide/'
-    fs_files <- bbs_read_dir(paste0(bbs_dir, fs_dir))
-    
-    bbs_download_util(bbs_dir, dest, subdir = fs_dir, dl_files = fs_files,
-                      overwrite = overwrite, verbose = verbose)
   }
 }
