@@ -50,7 +50,7 @@ bbs_meta_routes <- function(bbs_dir = NULL) {
     bbs_dir <- bbs_ftp()
   }
   
-  out <- csv_unzip(paste0(bbs_dir, "/routes.zip"))
+  out <- csv_unzip(paste(bbs_dir, "routes.zip", sep = '/'))
   out$active <- as.logical(out$active)
   
   return(out)

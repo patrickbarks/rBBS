@@ -40,7 +40,7 @@ bbs_meta_strata <- function(bbs_dir = NULL) {
     bbs_dir <- bbs_ftp()
   }
   
-  out <- read_bbs_txt(txt_file = paste0(bbs_dir, "BBSStrata.txt"))
+  out <- read_bbs_txt(txt_file = paste(bbs_dir, "BBSStrata.txt", sep = '/'))
   
   return(out)
 }

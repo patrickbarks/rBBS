@@ -43,7 +43,7 @@ bbs_meta_species <- function(bbs_dir = NULL) {
     bbs_dir <- bbs_ftp()
   }
   
-  df <- read_bbs_txt(txt_file = paste0(bbs_dir, "SpeciesList.txt"))
+  df <- read_bbs_txt(txt_file = paste(bbs_dir, "SpeciesList.txt", sep = '/'))
   
   return(df)
 }

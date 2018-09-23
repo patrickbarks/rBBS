@@ -70,7 +70,7 @@ bbs_meta_weather <- function(bbs_dir = NULL) {
     bbs_dir <- bbs_ftp()
   }
   
-  out <- csv_unzip(paste0(bbs_dir, "/Weather.zip"))
+  out <- csv_unzip(paste(bbs_dir, "Weather.zip", sep = '/'))
   
   out$state_num <- as.integer(out$state_num)
   out$route <- as.integer(out$route)

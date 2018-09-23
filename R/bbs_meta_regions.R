@@ -47,7 +47,8 @@ bbs_meta_regions <- function(bbs_dir = NULL, zip_files = FALSE) {
   }
   
   # read RegionCodes.txt
-  regions <- read_bbs_txt(paste0(bbs_dir, '/RegionCodes.txt'))
+  regions <- read_bbs_txt(paste(bbs_dir, 'RegionCodes.txt', sep = '/'))
+  
   regions$state_name <- bbs_state(regions$state_name)
   regions$country_name <- bbs_country(regions$country_num)
   regions <- regions[,c(1, 4, 2, 3)]
