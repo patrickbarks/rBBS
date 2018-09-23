@@ -70,10 +70,9 @@
 #'   (sum from all stops)}
 #' 
 #' @section Geographic Subsetting:
-#' For country and state names see \code{\link{bbs_meta_regions}} or BBS file
-#' \emph{RegionCodes.txt}. For integer bcr codes see \code{\link{bbs_meta_bcr}}
-#' or BBS file \emph{BCR.txt}, and for integer strata codes see
-#' \code{\link{bbs_meta_strata}} or BBS file \emph{BBSStrata.txt}.
+#' For country and state names see \code{\link{bbs_meta_regions}}. For integer
+#' bcr codes see \code{\link{bbs_meta_bcr}}, and for integer strata codes see
+#' \code{\link{bbs_meta_strata}}.
 #' 
 #' Geographic subsetting may done by countries and/or states OR bcr and/or
 #' strata, but not by both. Subsets are additive, so specifying
@@ -83,14 +82,11 @@
 #' }
 #' 
 #' will return data for all Canadian provinces/territories plus the state of
-#' Montana.
-#' 
-#' Subsetting by a country and a state within that country is allowed but
-#' unnecessary. The following lines will return the same data:
+#' Montana. Likewise, the following lines are equivalent, and will both return
+#' data for all American states:
 #' 
 #' \code{bbs_build_10('.', countries = 'United States', states = 'Florida')} \cr
 #' \code{bbs_build_10('.', countries = 'United States')}
-#' 
 #' 
 #' @author Bob O'Hara
 #' @author Patrick Barks <patrick.barks@@gmail.com>
@@ -188,27 +184,27 @@ bbs_build_10 <- function(bbs_dir, zeros = FALSE, countries = NULL,
   }
   
   paths_ts <- paste0(bbs_dir, ts_dir, files_ts)
-  bbs_10_l <- lapply(paths_ts, csv_unzip)
-  bbs_10 <- do.call(rbind.data.frame, bbs_10_l)
-  bbs_10$aou <- as.integer(bbs_10$aou)
-  bbs_10$state_num <- as.integer(bbs_10$state_num)
-  bbs_10$route <- as.integer(bbs_10$route)
+  bbs_l <- lapply(paths_ts, csv_unzip)
+  bbs <- do.call(rbind.data.frame, bbs_l)
+  bbs$aou <- as.integer(bbs$aou)
+  bbs$state_num <- as.integer(bbs$state_num)
+  bbs$route <- as.integer(bbs$route)
   
   # subset based on bcr and/or strata
   if (!is.null(bcr) | !is.null(strata)) {
     routes$rid <- with(routes, as.integer(paste0(country_num, state_num, route)))
-    bbs_rid <- with(bbs_10, as.integer(paste0(country_num, state_num, route)))
-    bbs_10 <- bbs_10[bbs_rid %in% routes$rid,]
+    bbs_rid <- with(bbs, as.integer(paste0(country_num, state_num, route)))
+    bbs <- bbs[bbs_rid %in% routes$rid,]
   }
   
   # subset based on years
   if (!is.null(years)) {
-    bbs_10 <- bbs_10[bbs_10$year %in% as.integer(years),]
+    bbs <- bbs[bbs$year %in% as.integer(years),]
   }
   
   # subset based on aou
   if (!is.null(aou)) {
-    bbs_10 <- bbs_10[bbs_10$aou %in% as.integer(aou),]
+    bbs <- bbs[bbs$aou %in% as.integer(aou),]
   }
   
   if (zeros == TRUE) {
@@ -232,8 +228,8 @@ bbs_build_10 <- function(bbs_dir, zeros = FALSE, countries = NULL,
     if (!is.null(aou)) {
       aou_unique <- as.integer(aou)
     } else {
-      # means will only create 0s for species observed in given subset of bbs_10
-      aou_unique <- sort(unique(bbs_10$aou))
+      # means will only create 0s for species observed in given subset of bbs
+      aou_unique <- sort(unique(bbs$aou))
     }
     
     wx$ryr <- paste0(wx$country_num, wx$state_num, wx$route, wx$year, wx$rpid)
@@ -256,20 +252,20 @@ bbs_build_10 <- function(bbs_dir, zeros = FALSE, countries = NULL,
     # TODO: optimize this line to speed up fn
     all_rows_j <- as.numeric(paste0(all_rows$ryr, all_rows$aou))
     
-    bbs_10_j <- as.numeric(paste0(bbs_10$country_num, bbs_10$state_num,
-                                  bbs_10$route, bbs_10$year, bbs_10$rpid,
-                                  bbs_10$aou))
+    bbs_j <- as.numeric(paste0(bbs$country_num, bbs$state_num,
+                               bbs$route, bbs$year, bbs$rpid,
+                               bbs$aou))
     
     # add counts to all_rows
-    m <- match(all_rows_j, bbs_10_j)
+    m <- match(all_rows_j, bbs_j)
     
-    all_rows$count_10 <- as.integer(bbs_10$count_10[m])
-    all_rows$count_20 <- as.integer(bbs_10$count_20[m])
-    all_rows$count_30 <- as.integer(bbs_10$count_30[m])
-    all_rows$count_40 <- as.integer(bbs_10$count_40[m])
-    all_rows$count_50 <- as.integer(bbs_10$count_50[m])
-    all_rows$stop_total <- as.integer(bbs_10$stop_total[m])
-    all_rows$species_total <- as.integer(bbs_10$species_total[m])
+    all_rows$count_10 <- as.integer(bbs$count_10[m])
+    all_rows$count_20 <- as.integer(bbs$count_20[m])
+    all_rows$count_30 <- as.integer(bbs$count_30[m])
+    all_rows$count_40 <- as.integer(bbs$count_40[m])
+    all_rows$count_50 <- as.integer(bbs$count_50[m])
+    all_rows$stop_total <- as.integer(bbs$stop_total[m])
+    all_rows$species_total <- as.integer(bbs$species_total[m])
     
     # transform NA counts (no match) to 0
     all_rows$count_10[is.na(all_rows$count_10)] <- 0L
@@ -280,8 +276,8 @@ bbs_build_10 <- function(bbs_dir, zeros = FALSE, countries = NULL,
     all_rows$stop_total[is.na(all_rows$stop_total)] <- 0L
     all_rows$species_total[is.na(all_rows$species_total)] <- 0L
     
-    bbs_10 <- all_rows[,-1] # remove ryr column
+    bbs <- all_rows[,-1] # remove ryr column
   }
   
-  return(bbs_10)
+  return(bbs)
 }

@@ -87,10 +87,9 @@ of zero for species even in regions where they have never been observed.
 }
 \section{Geographic Subsetting}{
 
-For country and state names see \code{\link{bbs_meta_regions}} or BBS file
-\emph{RegionCodes.txt}. For integer bcr codes see \code{\link{bbs_meta_bcr}}
-or BBS file \emph{BCR.txt}, and for integer strata codes see
-\code{\link{bbs_meta_strata}} or BBS file \emph{BBSStrata.txt}.
+For country and state names see \code{\link{bbs_meta_regions}}. For integer
+bcr codes see \code{\link{bbs_meta_bcr}}, and for integer strata codes see
+\code{\link{bbs_meta_strata}}.
 
 Geographic subsetting may done by countries and/or states OR bcr and/or
 strata, but not by both. Subsets are additive, so specifying
@@ -100,10 +99,8 @@ bbs_build_10('.', countries = 'Canada', states = 'Montana')
 }
 
 will return data for all Canadian provinces/territories plus the state of
-Montana.
-
-Subsetting by a country and a state within that country is allowed but
-unnecessary. The following lines will return the same data:
+Montana. Likewise, the following lines are equivalent, and will both return
+data for all American states:
 
 \code{bbs_build_10('.', countries = 'United States', states = 'Florida')} \cr
 \code{bbs_build_10('.', countries = 'United States')}

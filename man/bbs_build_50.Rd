@@ -4,37 +4,111 @@
 \alias{bbs_build_50}
 \title{Assemble North American Breeding Bird Survey 50-stop count data}
 \usage{
-bbs_build_50(bbs_dir)
+bbs_build_50(bbs_dir, zeros = FALSE, countries = NULL, states = NULL,
+  bcr = NULL, strata = NULL, aou = NULL, years = NULL)
 }
 \arguments{
 \item{bbs_dir}{Local directory from which to load BBS data.
 
-Must be an existing directory with the same structure as the USGS BBS
-directory (ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/).}
+  Must be an existing directory with the same structure as the USGS BBS
+  directory (ftp://ftpext.usgs.gov/pub/er/md/laurel/BBS/DataFiles/).}
+
+\item{zeros}{Build in counts of zero? Defaults to \code{FALSE}. (See Details)}
+
+\item{countries}{Vector of country names to subset to. Defaults to all
+available. Case insensitive. (See section \emph{Geographic Subsetting})}
+
+\item{states}{Vector of state/province/territory names to subset to. Defaults
+to all available. Case insensitive. (See section \emph{Geographic
+Subsetting})}
+
+\item{bcr}{Vector of Bird Conservation Region integer codes to subset to.
+Defaults to all available. (See section \emph{Geographic Subsetting})}
+
+\item{strata}{Vector of physiographic strata integer codes to subset to.
+Defaults to all available. (See section \emph{Geographic Subsetting})}
+
+\item{aou}{Vector of integer species id codes to subset to. Defaults to all
+available. (See BBS file \emph{SpeciesList.txt})}
+
+\item{years}{Vector of survey years to subset to. Defaults to all available.}
 }
 \value{
-A \code{data.frame} with the following columns:
-  \item{route_data_id}{integer code for unique combinations of country_num,
-  state, route, rpid, and year}
-  \item{country_num}{integer code for country: 124 (Canada), 484 (Mexico), or
-  840 (United States)}
-  \item{state_num}{integer code for state/province/territory (see BBS file
+A \code{data.frame} with the following columns (all integer):
+  \item{route_data_id}{code for unique combinations of country_num, state,
+  route, rpid, and year}
+  \item{country_num}{code for country: 124 (Canada), 484 (Mexico), or 840
+  (United States)}
+  \item{state_num}{code for state/province/territory (see BBS file
   \emph{RegionCodes.txt})}
-  \item{route}{integer code for survey route (unique within states)}
-  \item{rpid}{integer Run Protocol Identification ID (see BBS file
+  \item{route}{code for route (unique within states)}
+  \item{rpid}{code for Run Protocol ID (see BBS file
   \emph{RunProtocolID.txt})}
-  \item{year}{integer survey year}
-  \item{aou}{integer species code from American Ornithological Union}
-  \item{stop_1 ... stop_50}{total number of individuals of the species
-  recorded on the given stop}
+  \item{year}{survey year}
+  \item{aou}{species code from American Ornithological Union}
+  \item{stop_1 ... stop_50}{total individuals of the species recorded on
+  stops 1-10}
 }
 \description{
-Assemble North American Breeding Bird Survey (BBS) 50-stop count data
+Assemble North American Breeding Bird Survey 50-stop count data into a data
+frame, optionally subset to select regions, years, and/or species. The
+underlying data come from 10 zipped csv files within the BBS folder
+\emph{50-StopData/}. These csv files do not include counts of zero (i.e. when
+a species is not observed during a given survey), but counts of zero can
+optionally be built in (see argument \code{zeros}).\cr\cr \strong{Note}:
+Without counts of zero the full 50-stop dataset for 2017 includes 3.4 million
+rows. With zeros it includes 47 million rows, which will take some time to
+build and require a few gigabytes of memory. If building with zeros, consider
+subsetting to zip_use, years, and/or species of interest.
 }
+\details{
+If \code{zeros = TRUE}, counts of zero are built in as follows:
+
+1. Find every unique combination of route-year-rpid matching the given subset
+arguments (or the whole dataset if no subset arguments given).
+
+2. Find every unique species (aou) that was recorded on those
+route-year-rpid (subject to aou subset argument, if given).
+
+3. Create a data frame with every combination of those route-year-rpid and
+aou, and merge with the non-zero count data. Any route-year-rpid-aou rows
+with missing count data are then filled in with counts of zero.
+
+Note that this method is potentially inefficient in that it will yield counts
+of zero for species even in zip_use where they have never been observed.
+}
+\section{Geographic Subsetting}{
+
+For country and state names see \code{\link{bbs_meta_regions}}. For integer
+bcr codes see \code{\link{bbs_meta_bcr}}, and for integer strata codes see
+\code{\link{bbs_meta_strata}}.
+
+Geographic subsetting may done by countries and/or states OR bcr and/or
+strata, but not by both. Subsets are additive, so specifying
+
+\code{
+bbs_build_50('.', countries = 'Canada', states = 'Montana')
+}
+
+will return data for all Canadian provinces/territories plus the state of
+Montana. Likewise, the following lines are equivalent, and will both return
+data for all American states:
+
+\code{bbs_build_50('.', countries = 'United States', states = 'Florida')} \cr
+\code{bbs_build_50('.', countries = 'United States')}
+}
+
 \examples{
 \dontrun{
 
-bbs_50 <- bbs_build_50(bbs_dir = '.')
+# build whole dataset excluding counts of zero
+bbs <- bbs_build_50(bbs_dir = '.')
+
+# build with Canadian routes only, including counts of zero
+bbs <- bbs_build_50(bbs_dir = '.', zeros = TRUE, countries = 'Canada')
+
+# build for species Gray Jay (aou 4840), including counts of zero
+bbs <- bbs_build_50(bbs_dir = '.', zeros = TRUE, aou = 4840)
 }
 
 }
@@ -43,6 +117,9 @@ Pardieck, K.L., D.J. Ziolkowski Jr., M. Lutmerding and M.-A.R.
   Hudson. 2018. North American Breeding Bird Survey Dataset 1966-2017,
   version 2017.0. U.S. Geological Survey, Patuxent Wildlife Research Center.
   \url{https://doi.org/10.5066/F76972V8}
+}
+\seealso{
+\code{\link{bbs_download}}
 }
 \author{
 Bob O'Hara
