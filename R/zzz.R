@@ -24,11 +24,11 @@ bbs_download_util <- function(bbs_dir, dest, subdir, dl_files, overwrite,
   no_overwrite <- character(0)
   
   for(i in 1:length(dl_files)) {
-    if (overwrite == FALSE & file.exists(paste0(dest, subdir, dl_files[i]))) {
+    if (overwrite == FALSE & file.exists(paste(dest, subdir, dl_files[i], sep = '/'))) {
       no_overwrite <- append(no_overwrite, dl_files[i])
     } else {
-      download.file(paste0(bbs_dir, subdir, dl_files[i]),
-                    paste0(dest, subdir, dl_files[i]))
+      download.file(paste(bbs_dir, subdir, dl_files[i], sep = '/'),
+                    paste(dest, subdir, dl_files[i], sep = '/'))
     }
   }
   
@@ -68,7 +68,7 @@ csv_unzip <- function(zip_path) {
     stop('Zip archive appears to contain more than one csv file')
   }
   
-  dat <- suppressMessages(read_csv(paste0(temp_dir, '/', file_csv),
+  dat <- suppressMessages(read_csv(paste(temp_dir, file_csv, sep = '/'),
                                    na = c('NA', 'NULL'),
                                    progress = FALSE))
   
@@ -178,6 +178,7 @@ title_case <- function(x) {
 bbs_state_switch <- function(x) {
   switch(x,
          'Newfoundland And Labrador' = 'Newfoundland',
+         'North West Territories' = 'Northwest Territories',
          x)
 }
 
