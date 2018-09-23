@@ -44,8 +44,8 @@
 #'   \item{quality_current_id}{logical indicating whether the run took place
 #'   under suitable weather conditions, and within suitable time, date, and
 #'   route completion criteria (see BBS file \emph{WeatherInf.txt})}
-#'   \item{run_type}{logical indicating whether the run is acceptable by BBS
-#'   standards (see BBS file \emph{runtype.pdf})}
+#'   \item{run_type}{integer indicating whether the run is acceptable (1) or not
+#'   (0) by BBS standards (see BBS file \emph{runtype.pdf})}
 #' 
 #' @author Bob O'Hara
 #' @author Patrick Barks <patrick.barks@@gmail.com>
@@ -75,7 +75,6 @@ bbs_meta_weather <- function(bbs_dir = NULL) {
   out$state_num <- as.integer(out$state_num)
   out$route <- as.integer(out$route)
   out$assistant <- as.logical(out$assistant)
-  out$run_type <- as.logical(out$run_type)
   
   if ('quality_current_id' %in% names(out)) { # column only in newer releases
     out$quality_current_id <- as.logical(out$quality_current_id)

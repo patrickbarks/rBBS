@@ -46,8 +46,8 @@ A \code{data.frame} with the following columns:
   \item{quality_current_id}{logical indicating whether the run took place
   under suitable weather conditions, and within suitable time, date, and
   route completion criteria (see BBS file \emph{WeatherInf.txt})}
-  \item{run_type}{logical indicating whether the run is acceptable by BBS
-  standards (see BBS file \emph{runtype.pdf})}
+  \item{run_type}{integer indicating whether the run is acceptable (1) or not
+  (0) by BBS standards (see BBS file \emph{runtype.pdf})}
 }
 \description{
 Get a data frame with weather and environmental data from the North American
