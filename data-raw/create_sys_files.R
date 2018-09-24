@@ -37,3 +37,23 @@ file.remove('weather.csv')
 setwd('../../')
 
 
+
+
+# subset 50-stop zip file to Nunavut for tests
+nunavut_zip <- '~/bbs_data/50-StopData/1997ToPresent_SurveyWide/Fifty7.zip'
+
+temp <- tempdir()
+unzip(nunavut_zip, exdir = temp)
+
+bbs_50 <- read.csv(paste(temp, 'fifty7.csv', sep = '/'))
+bbs_50 <- subset(bbs_50, statenum == 62) # subset to Nunavut
+
+dir.create('inst/testdata/50-StopData/1997ToPresent_SurveyWide/', recursive = TRUE)
+
+setwd('inst/testdata/50-StopData/1997ToPresent_SurveyWide/')
+write.csv(bbs_50, 'fifty7.csv', row.names = FALSE)
+
+zip('Fifty7.zip', 'fifty7.csv')
+file.remove('fifty7.csv')
+setwd('~/rBBS')
+
