@@ -173,7 +173,7 @@ bbs_build_50 <- function(bbs_dir, zeros = FALSE, countries = NULL,
   paths_fs <- paste(bbs_dir, fs_dir, files_fs, sep = '/')
   bbs_l <- lapply(paths_fs, csv_unzip)
   bbs <- do.call(rbind.data.frame, bbs_l)
-  table(bbs$year)
+  
   bbs$aou <- as.integer(bbs$aou)
   bbs$state_num <- as.integer(bbs$state_num)
   bbs$route <- as.integer(bbs$route)
