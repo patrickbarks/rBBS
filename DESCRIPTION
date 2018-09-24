@@ -13,7 +13,7 @@ Description: An R package to download and work with data from the North American
 URL: https://github.com/oharar/rBBS/
 BugReports: https://github.com/oharar/rBBS/issues
 Depends: R (>= 2.10)
-Imports: utils, readr, tibble
+Imports: utils, readr, tibble, curl
 Encoding: UTF-8
 Suggests: testthat,
     knitr,

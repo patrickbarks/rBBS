@@ -1,7 +1,8 @@
 
+#' @importFrom curl curl
 #' @noRd
 bbs_read_dir <- function(dir) {
-  bbs_con <- url(dir, method = 'libcurl')
+  bbs_con <- curl(dir)
   dir_lines <- readLines(bbs_con)
   close(bbs_con)
   dir_lines_split <- strsplit(dir_lines, '[[:space:]]+')
@@ -11,7 +12,7 @@ bbs_read_dir <- function(dir) {
 }
 
 
-#' @importFrom utils download.file
+#' @importFrom curl curl_download
 #' @noRd
 bbs_download_util <- function(bbs_dir, dest, subdir, dl_files, overwrite,
                               verbose) {
@@ -22,8 +23,9 @@ bbs_download_util <- function(bbs_dir, dest, subdir, dl_files, overwrite,
     if (overwrite == FALSE & file.exists(paste(dest, subdir, dl_files[i], sep = '/'))) {
       no_overwrite <- append(no_overwrite, dl_files[i])
     } else {
-      download.file(paste(bbs_dir, subdir, dl_files[i], sep = '/'),
-                    paste(dest, subdir, dl_files[i], sep = '/'))
+      curl_download(paste(bbs_dir, subdir, dl_files[i], sep = '/'),
+                    paste(dest, subdir, dl_files[i], sep = '/'),
+                    quiet = FALSE)
     }
   }
   
@@ -36,7 +38,7 @@ bbs_download_util <- function(bbs_dir, dest, subdir, dl_files, overwrite,
 
 
 #' @importFrom utils unzip
-#' @importFrom utils download.file
+#' @importFrom curl curl_download
 #' @importFrom readr read_csv
 #' @noRd
 csv_unzip <- function(zip_path) {
@@ -49,7 +51,7 @@ csv_unzip <- function(zip_path) {
   
   if(grepl('^http:|^ftp:', zip_path)) {
     temp_file <- tempfile()
-    download.file(zip_path, temp_file)
+    curl_download(zip_path, temp_file, quiet = FALSE)
     unzip(temp_file, exdir = temp_dir)
     unlink(temp_file)
   } else {
@@ -75,7 +77,7 @@ csv_unzip <- function(zip_path) {
 
 
 #' @importFrom utils read.fwf
-#' @importFrom utils download.file
+#' @importFrom curl curl_download
 #' @importFrom tibble as_tibble
 #' @noRd
 read_bbs_txt <- function(txt_file) {
@@ -83,7 +85,7 @@ read_bbs_txt <- function(txt_file) {
   # if txt_file path ftp or http, download
   if (grepl('^ftp:|^http:|^https:', txt_file)) {
     temp <- tempfile()
-    download.file(txt_file, temp)
+    curl_download(txt_file, temp, quiet = FALSE)
   } else {
     temp <- txt_file
   }
@@ -115,6 +117,7 @@ read_bbs_txt <- function(txt_file) {
 #' Get the names of state-specific zip files containing 10-stop count data from
 #' README.txt
 #' @importFrom tibble tibble
+#' @importFrom curl curl_download
 #' @noRd
 bbs_files_10 <- function(bbs_dir = NULL) {
   
@@ -128,7 +131,7 @@ bbs_files_10 <- function(bbs_dir = NULL) {
   # if txt_file path ftp or http, download
   if (grepl('^ftp:|^http:|^https:', txt_file)) {
     temp <- tempfile()
-    download.file(txt_file, temp)
+    curl_download(txt_file, temp, quiet = FALSE)
   } else {
     temp <- txt_file
   }
