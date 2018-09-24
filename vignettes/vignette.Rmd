@@ -1,0 +1,222 @@
+---
+title: "rBBS"
+author: "Patrick Barks"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{rBBS}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+knitr::opts_knit$set(
+  root.dir = '~/bbs_data/'
+)
+```
+
+
+## Summary of the North American Breeding Bird Survey (BBS)
+
+The BBS is a large-scale bird monitoring program initiated in 1966 that
+currently encompasses over 4,600 active survey routes within North America. Each
+survey involves 50 three-minute point counts conducted at half-mile intervals
+along a 24.5-mile route, by a skilled volunteer during the height of the
+breeding season.
+
+See more information at https://www.pwrc.usgs.gov/bbs/.
+
+See the terms of use for BBS data at https://www.pwrc.usgs.gov/BBS/RawData/.
+
+## BBS datasets
+
+The BBS provides two main datasets:
+
+50-stop data:
+
+* includes bird counts for each of the 50 stops on a given survey
+* only consistently available from 1997 onward
+
+10-stop data:
+
+* bird counts binned into groups of 10 stops (i.e. stops 1-10, 11-20, ..., 41-50)
+* consistently available for all survey years
+
+## Installing rBBS
+
+Install the development version from GitHub with
+
+```{r, eval=FALSE}
+# install.packages("devtools")
+devtools::install_github("patrickbarks/rBBS")
+```
+
+## Load rBBS and other packages used in this vignette
+
+```{r, message=FALSE}
+library("rBBS")
+library("tibble")
+library("dplyr")
+library("ggplot2")
+```
+
+## Downloading BBS data
+
+Our first task is to download BBS data from the USGS ftp server. This can be
+done manually following the links at https://www.pwrc.usgs.gov/bbs/, or by using
+the function `bbs_download`:
+
+```{r, eval=FALSE}
+# download to local directory ('.' gives the current working directory)
+# you may want to specify a different directory here; I'll be sticking with the
+#  working directory throughout this vignette
+bbs_download(dest = '.')
+```
+
+With the default options, `bbs_download` downloads all metadata files and all
+10-stop data. The 50-stop data can be downloaded by adding the argument
+`fifty_stop = TRUE`.
+
+Downloading all of the 10-stop or 50-stop data will take at least a few minutes,
+depending on network speeds. If you only want data for select states or regions,
+you can limit the download to specific geographic subsets using the arguments
+`countries`, `states`, `bcr`, or `strata`, e.g.
+
+```{r, eval=FALSE}
+# download all metadata, but only download 10-stop data for the Pacific states
+bbs_download(dest = '.', states = c('Washington', 'Oregon', 'California'))
+```
+
+## Working with metadata tables
+
+Now that we've got the data, we can build metadata tables using the `bbs_meta_*`
+functions:
+
+```{r}
+bcr <- bbs_meta_strata(bbs_dir = '.')
+strata <- bbs_meta_strata(bbs_dir = '.')
+regions <- bbs_meta_regions(bbs_dir = '.')
+routes <- bbs_meta_routes(bbs_dir = '.')
+species <- bbs_meta_species(bbs_dir = '.')
+weather <- bbs_meta_weather(bbs_dir = '.')
+```
+
+### Route metadata
+
+Let's take a glimpse at the metadata table `routes`
+
+```{r}
+tibble::glimpse(routes)
+```
+
+The `routes` table gives route-specific data, primarily geographic, including
+the latitude and longitude of each survey route's starting point, and integer
+codes corresponding to the country, state, physiographic stratum, and Bird
+Conservation Region (bcr) that each route falls within.
+
+Because the integer codes for the various regions are meaningless to the average
+person, it is often useful to join a metadata table like `routes` with another
+table that includes the full names of the regions of interest. For instance, we
+could join `routes` with the `regions` table to attach the full names of
+countries and states.
+
+```{r}
+routes_regions <- left_join(routes, regions)
+
+# notice the table now includes columns 'country_name' and 'state_name'
+tibble::glimpse(routes_regions)
+```
+
+We can now work with `routes` using familiar country or state names rather than
+integer codes. For instance, let's find the states that have the highest number
+of active survey routes
+
+```{r}
+routes_regions %>% 
+  subset(active == TRUE) %>%    # subset to currently-active routes
+  group_by(state_name) %>%      # group by state
+  summarize(n_routes = n()) %>% # count number of routes, by group (i.e. state)
+  arrange(desc(n_routes))       # arrange states in descending order of n_routes
+```
+
+
+### Route-by-year metadata
+
+If we want to look at route-related data by year, the `weather` table is the
+place to go. It includes environmental and other data corresponding to every
+single 'run' of a route (generally there is one run per route per year, but
+occassionaly there are multiple).
+
+```{r}
+tibble::glimpse(weather)
+```
+
+Let's use the `weather` table to examine how the number of survey routes has
+changed over time.
+
+```{r, fig.width=7}
+df_routes <- weather %>% 
+  mutate(route_uniq = paste(country_num, state_num, route)) %>% # unique id for each route
+  group_by(year) %>% # group by year
+  summarize(n_routes = length(unique(route_uniq))) # count unique routes
+
+# plot
+ggplot(df_routes) +
+  geom_line(aes(year, n_routes), size = 1.2)
+```
+
+
+## Working with bird count data
+
+Tables with bird-count data can be built using the `bbs_build_*` functions
+(`bbs_build_10` for the 10-stop data, and `bbs_build_50` for the 50-stop data),
+e.g.
+
+```{r}
+# build 10-stop data for Canadian routes
+bbs_10 <- bbs_build_10(bbs_dir = '.', countries = 'Canada')
+```
+
+We'll stick to the 10-stop data for the remainder of this vignette, but working
+with the 50-stop data is very similar (there are just more count columns).
+
+Let's take a look at the `bbs_10` table
+
+```{r}
+tibble::glimpse(bbs_10)
+```
+
+
+## Styles
+
+The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
+
+    output: 
+      rmarkdown::html_vignette:
+        css: mystyles.css
+
+
+You can enable figure captions by `fig_caption: yes` in YAML:
+
+    output:
+      rmarkdown::html_vignette:
+        fig_caption: yes
+
+Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
+
+## More Examples
+
+You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
+
+```{r, echo=FALSE, results='asis'}
+knitr::kable(head(mtcars, 10))
+```
+
+Also a quote using `>`:
+
+> "He who gives up [code] safety for [code] speed deserves neither."
+([via](https://twitter.com/hadleywickham/status/504368538874703872))

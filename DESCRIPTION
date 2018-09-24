@@ -15,7 +15,12 @@ BugReports: https://github.com/oharar/rBBS/issues
 Depends: R (>= 2.10)
 Imports: utils, readr, tibble
 Encoding: UTF-8
-Suggests: testthat
+Suggests: testthat,
+    knitr,
+    rmarkdown,
+    dplyr,
+    ggplot2
 License: GPL-3 | file LICENSE
 LazyData: TRUE
 RoxygenNote: 6.1.0
+VignetteBuilder: knitr
