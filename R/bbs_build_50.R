@@ -108,6 +108,11 @@ bbs_build_50 <- function(bbs_dir, zeros = FALSE, countries = NULL,
                          states = NULL, bcr = NULL, strata = NULL,
                          aou = NULL, years = NULL) {
 
+  if ((!is.null(countries) | !is.null(states)) &
+      (!is.null(bcr) | !is.null(strata))) {
+    stop('Cannot subset for both country/states AND bcr/strata.')
+  }
+  
   fs_dir <- '50-StopData/1997ToPresent_SurveyWide/'
   files_fs <- list.files(paste(bbs_dir, fs_dir, sep = '/'))
   files_fs <- files_fs[grepl('\\.zip$', files_fs)]
