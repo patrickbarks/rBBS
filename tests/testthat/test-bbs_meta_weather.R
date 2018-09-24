@@ -10,5 +10,5 @@ test_that("bbs_meta_weather works correctly", {
   expect_is(weather$state_num, "integer")
   expect_is(weather$route, "integer")
   expect_is(weather$year, "integer")
-  expect_is(weather$run_type, "logical")
+  expect_is(weather$run_type, "integer")
 })
