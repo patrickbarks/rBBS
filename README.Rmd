@@ -9,7 +9,8 @@ output: github_document
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "man/img"
+  fig.path = "man/img",
+  eval=FALSE
 )
 ```
 
@@ -19,26 +20,30 @@ An R package to work with data from the North American Breeding Bird Survey
 (BBS).
 
 The BBS is a large-scale bird monitoring program that was initiated in 1966 and
-currently encompasses over 4,600 active survey routes within North America. Each
-survey involves 50 three-minute point counts conducted at half-mile intervals
-along a 24.5-mile route. Surveys are conducted by skilled volunteers during the
-height of the breeding season.
+currently encompasses over 4,600 active survey routes in North America. Each
+survey is conducted by a skilled volunteer during the height of the breeding
+season, and entails 50 three-minute point counts conducted at half-mile
+intervals along a 24.5-mile route.
 
 The BBS is a cooperative effort between the United States Geological Survey
 (USGS) and Environment and Climate Change Canada's Canadian Wildlife Service
-(CWS). See more information at https://www.pwrc.usgs.gov/bbs/, and see also the
-terms of use for BBS data at https://www.pwrc.usgs.gov/BBS/RawData/.
+(CWS).
+
+See more information at https://www.pwrc.usgs.gov/bbs/.
+
+See also the terms of use for BBS data at
+https://www.pwrc.usgs.gov/BBS/RawData/.
 
 ## BBS datasets
 
-The BBS provides two main datasets (plus a variety of metadata tables):
+The BBS provides two main datasets:
 
-##### 50-stop data
+*50-stop data*
 
 * includes bird counts for each of the 50 stops on a given survey
 * only consistently available from 1997 onward
 
-##### 10-stop data
+*10-stop data*
 
 * bird counts binned into groups of 10 stops (i.e. stops 1-10, 11-20, ..., 41-50)
 * consistently available for all survey years
@@ -60,29 +65,29 @@ devtools::install_github("patrickbarks/rBBS")
 
 To work with BBS data we first need to download it from the USGS ftp server.
 This can be done manually following the links at https://www.pwrc.usgs.gov/bbs/,
-or by using the function `bbs_download`:
+or by using the function `bbs_download`.
 
 ```{r, eval=FALSE}
 library("rBBS")
 
-# download to local directory (e.g. '.' gives the current working directory)
-bbs_download(dest = '.')
+# "." gives the working directory; you may prefer to specify a different one
+bbs_download(dest = ".")
 ```
 
-The default download options retrieve all metadata files and all 10-stop data.
-The 50-stop data can be downloaded by adding the argument `fifty_stop = TRUE` to
-the line above.
+The default options download all metadata files and all 10-stop data. The
+50-stop data can be downloaded by adding the argument `fifty_stop = TRUE`.
 
 #### Build metadata tables
 
-Metadata tables can be built using the `bbs_meta_*` functions:
+Metadata tables can be built using the `bbs_meta_*` functions.
 
 ```{r, eval=FALSE}
-strata <- bbs_meta_strata(bbs_dir = '.')
-regions <- bbs_meta_regions(bbs_dir = '.')
-routes <- bbs_meta_routes(bbs_dir = '.')
-species <- bbs_meta_species(bbs_dir = '.')
-weather <- bbs_meta_weather(bbs_dir = '.')
+bcr <- bbs_meta_bcr(bbs_dir = ".")
+strata <- bbs_meta_strata(bbs_dir = ".")
+regions <- bbs_meta_regions(bbs_dir = ".")
+routes <- bbs_meta_routes(bbs_dir = ".")
+species <- bbs_meta_species(bbs_dir = ".")
+weather <- bbs_meta_weather(bbs_dir = ".")
 ```
 
 #### Build bird count tables
@@ -90,8 +95,8 @@ weather <- bbs_meta_weather(bbs_dir = '.')
 Tables with bird-count data can be built using the `bbs_build_*` functions:
 
 ```{r, eval=FALSE}
-bbs_10 <- bbs_build_10(bbs_dir = '.') # 10-stop data
-bbs_50 <- bbs_build_50(bbs_dir = '.') # 50-stop data
+bbs_10 <- bbs_build_10(bbs_dir = ".") # 10-stop data
+bbs_50 <- bbs_build_50(bbs_dir = ".") # 50-stop data
 ```
 
 ##### Build in counts of zero
@@ -105,8 +110,8 @@ rows, which requires some time to build and a few gigabytes of memory. It's
 therefore a good idea to subset to the species, years, or locations of interest
 within the call to `bbs_build_*`, e.g.
 
-```{r, eval=FALSE}
-bbs_10 <- bbs_build_10(bbs_dir = '.', zeros = TRUE,
+```{r}
+bbs_10 <- bbs_build_10(bbs_dir = ".", zeros = TRUE,
                        states = c('Washington', 'Oregon', 'California'))
 ```
 
@@ -115,18 +120,18 @@ bbs_10 <- bbs_build_10(bbs_dir = '.', zeros = TRUE,
 
 Let's say we're interested in the distribution of the Western Meadowlark within
 the United States. We can find its American Ornithological Union species code
-(aou) in the metadata table `species`:
+(aou) in the metadata table `species`.
 
-```{r, eval=FALSE}
+```{r}
 species$aou[species$english_common_name == 'Western Meadowlark']
-# aou for the Western Meadowlark is 5011
+#> [1] 5011
 ```
 
 Now we can build a table with the 10-stop count data (including zeros) for the
-Western Meadowlark
+Western Meadowlark.
 
-```{r, eval=FALSE}
-bbs_wm <- bbs_build_10(bbs_dir = '.', zeros = TRUE,
+```{r}
+bbs_wm <- bbs_build_10(bbs_dir = ".", zeros = TRUE,
                        countries = 'United States', aou = 5011)
 ```
 
@@ -134,7 +139,7 @@ Next, we'll summarize the occurrence of the Western Meadowlark by route (unique
 combinations of `country_num` x `state_num` x `route`). We'll calculate
 occurrence simply as any instance of `species_total > 0` on a given route.
 
-```{r, eval=FALSE}
+```{r}
 library(dplyr)
 
 bbs_wm_occur <- bbs_wm %>% 
@@ -147,7 +152,7 @@ bbs_wm_occur <- bbs_wm %>%
 
 And finally, we'll plot the occurrence data on a map of the United States.
 
-```{r, eval=FALSE}
+```{r}
 library(ggplot2)
 states <- map_data("state")
 
