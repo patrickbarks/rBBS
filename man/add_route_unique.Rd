@@ -18,17 +18,16 @@ survey-wide. The additional column is called \code{name} and is of class
 \code{integer}.
 }
 \description{
-Add a column to a BBS table identifying unique routes survey-wide. The
-\code{route} column in a variety of BBS tables only identifies unique routes
-within states. This function creates route identifiers that are unique
+The \code{route} column in a variety of BBS tables only identifies unique
+routes within states. This function creates route identifiers that are unique
 survey-wide by pasting together columns \code{country_num}, \code{state_num},
-and  \code{route}.
+and \code{route}.
 }
 \examples{
 \dontrun{
 
 # load the metadata table 'weather'
-weather <- add_route_unique(bbs_dir = ".")
+weather <- bbs_meta_weather(bbs_dir = ".")
 
 # add a column identifying unique routes
 weather <- add_route_unique(weather)
