@@ -101,7 +101,8 @@ bbs_download <- function(dest, bbs_dir = NULL, countries = NULL, states = NULL,
     tl_files <- bbs_read_dir(bbs_dir)
     
     bbs_download_util(bbs_dir, dest, subdir = '', dl_files = tl_files,
-                      overwrite = overwrite, verbose = verbose)
+                      file_type = 'metadata', overwrite = overwrite,
+                      verbose = verbose)
   }
   
   ## download 10- and 50-stop data
@@ -137,7 +138,8 @@ bbs_download <- function(dest, bbs_dir = NULL, countries = NULL, states = NULL,
       }
       
       bbs_download_util(bbs_dir, dest, subdir = ts_dir, dl_files = ts_files,
-                        overwrite = overwrite, verbose = verbose)
+                        file_type = '10-stop', overwrite = overwrite,
+                        verbose = verbose)
     }
     
     ## download 50-stop files
@@ -156,7 +158,8 @@ bbs_download <- function(dest, bbs_dir = NULL, countries = NULL, states = NULL,
       }
       
       bbs_download_util(bbs_dir, dest, subdir = fs_dir, dl_files = fs_files,
-                        overwrite = overwrite, verbose = verbose)
+                        file_type = '50-stop', overwrite = overwrite,
+                        verbose = verbose)
     }
   }
 }
