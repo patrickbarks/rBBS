@@ -9,7 +9,7 @@
 #' Without counts of zero the full 50-stop dataset for 2017 includes 3.4 million
 #' rows. With zeros it includes 47 million rows, which will take some time to
 #' build and require a few gigabytes of memory. If building with zeros, consider
-#' subsetting to zip_use, years, and/or species of interest.
+#' subsetting to regions, years, and/or species of interest.
 #'
 #' @param bbs_dir Local directory from which to load BBS data.
 #'
@@ -43,7 +43,7 @@
 #' with missing count data are then filled in with counts of zero.
 #' 
 #' Note that this method is potentially inefficient in that it will yield counts
-#' of zero for species even in zip_use where they have never been observed.
+#' of zero for species even in regions where they have never been observed.
 #' 
 #' @return
 #' A \code{data.frame} with the following columns (all integer):
