@@ -21,7 +21,17 @@ survey-wide. The additional column is called \code{name} and is of class
 The \code{route} column in a variety of BBS tables only identifies unique
 routes within states. This function creates route identifiers that are unique
 survey-wide by pasting together columns \code{country_num}, \code{state_num},
-and \code{route}.
+and \code{route} (after first adding leading zeros to ensure a constant
+number of digits for each component column).
+}
+\details{
+Before the component columns are pasted together and reconverted to an
+integer, leadig zeros are added, where necessary, to ensure constant columns
+widths (and therefore unique final codes). The number of digits for each
+component column is:
+ - \code{country_num}: 3 digits
+ - \code{state_num}: 2 digits
+ - \code{route}: 3 digits
 }
 \examples{
 \dontrun{

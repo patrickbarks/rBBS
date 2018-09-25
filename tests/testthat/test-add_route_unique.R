@@ -7,9 +7,11 @@ test_that("add_route_unique works correctly", {
   routes <- bbs_meta_routes(bbs_dir = bbs_dir)
   
   routes_add <- add_route_unique(routes)
+  widths <- vapply(routes_add$route_unique, nchar, integer(1))
   
   expect_length(routes_add, ncol(routes) + 1)
   expect_true("route_unique" %in% names(routes_add))
+  expect_true(all(widths) == 8)
   expect_true(nrow(routes) == nrow(routes_add))
   expect_error(add_route_unique(bcr))
   expect_error(add_route_unique(routes_add))
