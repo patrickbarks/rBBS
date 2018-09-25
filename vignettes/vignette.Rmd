@@ -12,21 +12,21 @@ vignette: >
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  eval = FALSE
 )
-knitr::opts_knit$set(
-  root.dir = '~/bbs_data/'
-)
+# knitr::opts_knit$set(
+#   root.dir = '~/bbs_data/'
+# )
 ```
-
 
 ## Summary of the North American Breeding Bird Survey (BBS)
 
-The BBS is a large-scale bird monitoring program initiated in 1966 that
-currently encompasses over 4,600 active survey routes within North America. Each
-survey involves 50 three-minute point counts conducted at half-mile intervals
-along a 24.5-mile route, by a skilled volunteer during the height of the
-breeding season.
+The BBS is a large-scale bird monitoring program that was initiated in 1966 and
+currently encompasses over 4,600 active survey routes in North America. Each
+survey is conducted by a skilled volunteer during the height of the breeding
+season, and entails 50 three-minute point counts conducted at half-mile
+intervals along a 24.5-mile route.
 
 See more information at https://www.pwrc.usgs.gov/bbs/.
 
@@ -36,12 +36,12 @@ See the terms of use for BBS data at https://www.pwrc.usgs.gov/BBS/RawData/.
 
 The BBS provides two main datasets:
 
-50-stop data:
+*50-stop*
 
 * includes bird counts for each of the 50 stops on a given survey
 * only consistently available from 1997 onward
 
-10-stop data:
+*10-stop*
 
 * bird counts binned into groups of 10 stops (i.e. stops 1-10, 11-20, ..., 41-50)
 * consistently available for all survey years
@@ -66,157 +66,418 @@ library("ggplot2")
 
 ## Downloading BBS data
 
-Our first task is to download BBS data from the USGS ftp server. This can be
+The first task is to download BBS data from the USGS ftp server. This can be
 done manually following the links at https://www.pwrc.usgs.gov/bbs/, or by using
-the function `bbs_download`:
+the function `bbs_download`.
 
 ```{r, eval=FALSE}
-# download to local directory ('.' gives the current working directory)
-# you may want to specify a different directory here; I'll be sticking with the
-#  working directory throughout this vignette
-bbs_download(dest = '.')
+# "." gives the working directory; you may prefer to specify a different one
+bbs_download(dest = ".")
 ```
 
-With the default options, `bbs_download` downloads all metadata files and all
-10-stop data. The 50-stop data can be downloaded by adding the argument
-`fifty_stop = TRUE`.
+The default options download all metadata files and all 10-stop data. The
+50-stop data can be downloaded by adding the argument `fifty_stop = TRUE`.
+
+#### Download a specific subset of BBS data
 
 Downloading all of the 10-stop or 50-stop data will take at least a few minutes,
 depending on network speeds. If you only want data for select states or regions,
-you can limit the download to specific geographic subsets using the arguments
-`countries`, `states`, `bcr`, or `strata`, e.g.
+use the arguments `countries`, `states`, `bcr`, or `strata`, e.g.
 
 ```{r, eval=FALSE}
 # download all metadata, but only download 10-stop data for the Pacific states
-bbs_download(dest = '.', states = c('Washington', 'Oregon', 'California'))
+bbs_download(dest = ".", states = c("Washington", "Oregon", "California"))
 ```
 
 ## Working with metadata tables
 
 Now that we've got the data, we can build metadata tables using the `bbs_meta_*`
-functions:
+functions.
 
 ```{r}
-bcr <- bbs_meta_strata(bbs_dir = '.')
-strata <- bbs_meta_strata(bbs_dir = '.')
-regions <- bbs_meta_regions(bbs_dir = '.')
-routes <- bbs_meta_routes(bbs_dir = '.')
-species <- bbs_meta_species(bbs_dir = '.')
-weather <- bbs_meta_weather(bbs_dir = '.')
+bcr <- bbs_meta_strata(bbs_dir = ".")
+strata <- bbs_meta_strata(bbs_dir = ".")
+regions <- bbs_meta_regions(bbs_dir = ".")
+routes <- bbs_meta_routes(bbs_dir = ".")
+species <- bbs_meta_species(bbs_dir = ".")
+weather <- bbs_meta_weather(bbs_dir = ".")
 ```
 
-### Route metadata
+#### Route metadata
 
-Let's take a glimpse at the metadata table `routes`
+Let's take a glimpse at the `routes` table.
 
 ```{r}
 tibble::glimpse(routes)
+#> Observations: 5,690
+#> Variables: 11
+#> $ country_num          <int> 840, 840, 840, 840, 840, 840, 840, 840, 8...
+#> $ state_num            <int> 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,...
+#> $ route                <int> 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13...
+#> $ route_name           <chr> "ST FLORIAN", "HILLSBORO", "FLORENCE", "T...
+#> $ active               <lgl> TRUE, FALSE, FALSE, TRUE, FALSE, FALSE, T...
+#> $ latitude             <dbl> 34.86869, 34.63867, 34.80000, 34.02979, 3...
+#> $ longitude            <dbl> -87.60414, -87.19129, -87.73333, -87.0592...
+#> $ stratum              <int> 14, 14, 14, 13, 13, 14, 14, 13, 13, 11, 1...
+#> $ bcr                  <int> 27, 24, 24, 28, 28, 24, 24, 28, 28, 29, 2...
+#> $ route_type_id        <int> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,...
+#> $ route_type_detail_id <int> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,...
 ```
 
 The `routes` table gives route-specific data, primarily geographic, including
-the latitude and longitude of each survey route's starting point, and integer
-codes corresponding to the country, state, physiographic stratum, and Bird
+the coordinates of each survey route's starting point, and integer codes
+corresponding to the country, state, physiographic stratum, and Bird
 Conservation Region (bcr) that each route falls within.
 
-Because the integer codes for the various regions are meaningless to the average
+Note that codes in the `route` column are only unique within states, so we need
+to combine `country_num` x `state_num` x `route` to identify unique routes
+survey-wide (this applies to other BBS tables as well).
+
+Because the integer codes for the various regions don't mean much to the average
 person, it is often useful to join a metadata table like `routes` with another
-table that includes the full names of the regions of interest. For instance, we
-could join `routes` with the `regions` table to attach the full names of
-countries and states.
+table that includes the full names of the regions of interest (e.g. `regions`,
+`bcr`, or `strata`). For instance, we could join `routes` with the `regions`
+table to attach the full names of countries and states.
 
 ```{r}
 routes_regions <- left_join(routes, regions)
 
 # notice the table now includes columns 'country_name' and 'state_name'
 tibble::glimpse(routes_regions)
+#> Observations: 5,690
+#> Variables: 13
+#> $ country_num          <int> 840, 840, 840, 840, 840, 840, 840, 840, 8...
+#> $ state_num            <int> 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,...
+#> $ route                <int> 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13...
+#> $ route_name           <chr> "ST FLORIAN", "HILLSBORO", "FLORENCE", "T...
+#> $ active               <lgl> TRUE, FALSE, FALSE, TRUE, FALSE, FALSE, T...
+#> $ latitude             <dbl> 34.86869, 34.63867, 34.80000, 34.02979, 3...
+#> $ longitude            <dbl> -87.60414, -87.19129, -87.73333, -87.0592...
+#> $ stratum              <int> 14, 14, 14, 13, 13, 14, 14, 13, 13, 11, 1...
+#> $ bcr                  <int> 27, 24, 24, 28, 28, 24, 24, 28, 28, 29, 2...
+#> $ route_type_id        <int> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,...
+#> $ route_type_detail_id <int> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,...
+#> $ country_name         <chr> "United States", "United States", "United...
+#> $ state_name           <chr> "Alabama", "Alabama", "Alabama", "Alabama...
 ```
 
 We can now work with `routes` using familiar country or state names rather than
-integer codes. For instance, let's find the states that have the highest number
-of active survey routes
+codes. For instance, let's find the states that have the highest number of
+active survey routes.
 
 ```{r}
 routes_regions %>% 
   subset(active == TRUE) %>%    # subset to currently-active routes
   group_by(state_name) %>%      # group by state
-  summarize(n_routes = n()) %>% # count number of routes, by group (i.e. state)
+  summarize(n_routes = n()) %>% # count number of routes (i.e. rows) by group (i.e. state)
   arrange(desc(n_routes))       # arrange states in descending order of n_routes
+#> # A tibble: 62 x 2
+#>    state_name       n_routes
+#>    <chr>               <int>
+#>  1 California            225
+#>  2 Texas                 198
+#>  3 Ontario               196
+#>  4 Alberta               180
+#>  5 Quebec                166
+#>  6 British Columbia      142
+#>  7 Colorado              135
+#>  8 Saskatchewan          123
+#>  9 Oregon                119
+#> 10 New York              112
+#> # ... with 52 more rows
 ```
 
 
-### Route-by-year metadata
+#### Route-by-year metadata
 
-If we want to look at route-related data by year, the `weather` table is the
-place to go. It includes environmental and other data corresponding to every
-single 'run' of a route (generally there is one run per route per year, but
-occassionaly there are multiple).
+The `weather` table gives environmental and other data corresponding to every
+single 'run' of a route. Generally there is just one run per route per year, but
+occasionally there are more — within-year replicates are indicated with an
+`rpid` code different than `101`. Let's take a glimpse at `weather`.
 
 ```{r}
 tibble::glimpse(weather)
+#> Observations: 122,925
+#> Variables: 22
+#> $ route_data_id      <int> 6174482, 6178138, 6179521, 6180286, 6179841...
+#> $ country_num        <int> 124, 124, 124, 124, 124, 124, 124, 124, 124...
+#> $ state_num          <int> 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4...
+#> $ route              <int> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1...
+#> $ rpid               <int> 101, 101, 101, 101, 101, 101, 101, 101, 101...
+#> $ year               <int> 1972, 1973, 1974, 1975, 1976, 1978, 1979, 1...
+#> $ month              <int> 6, 6, 6, 6, 6, 6, 6, 7, 6, 6, 6, 6, 6, 6, 6...
+#> $ day                <int> 9, 7, 8, 2, 10, 9, 16, 12, 13, 24, 29, 27, ...
+#> $ obs_n              <int> 1150175, 1150175, 1150175, 1150175, 1150175...
+#> $ total_spp          <int> 47, 41, 49, 53, 49, 51, 65, 52, 66, 50, 51,...
+#> $ start_temp         <int> 65, 65, 37, 56, 38, 55, 42, 50, 41, 54, 55,...
+#> $ end_temp           <int> 60, 67, 58, 56, 63, 62, 55, 57, 45, 77, 65,...
+#> $ temp_scale         <chr> "F", "F", "F", "F", "F", "F", "F", "F", "F"...
+#> $ start_wind         <int> 1, 5, 0, 3, 1, 2, 1, 3, 3, 2, 1, 3, 2, 0, 3...
+#> $ end_wind           <int> 3, 5, 1, 3, 1, 1, 3, 4, 4, 3, 1, 1, 5, 4, 4...
+#> $ start_sky          <int> 1, 1, 4, 1, 0, 2, 0, 1, 2, 1, 0, 0, 8, 0, 2...
+#> $ end_sky            <int> 2, 1, 1, 1, 1, 2, 1, 1, 2, 0, 0, 0, 1, 1, 2...
+#> $ start_time         <chr> "0450", "0444", "0448", "0451", "0444", "04...
+#> $ end_time           <chr> "0900", "0915", "0921", "0923", "0920", "09...
+#> $ assistant          <lgl> FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, F...
+#> $ quality_current_id <lgl> TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, ...
+#> $ run_type           <int> 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0...
 ```
 
-Let's use the `weather` table to examine how the number of survey routes has
-changed over time.
+Note that the final column, `run_type`, indicates whether a given run did (`1`)
+or did not (`0`) meet BBS quality standards based on weather, date, time to
+completion, and other factors. The bird count tables **do** include runs that
+don't meet the quality standard — we'll come back to this later.
+
+For now, let's use the `weather` table to examine how the number of survey
+routes has changed over time.
 
 ```{r, fig.width=7}
 df_routes <- weather %>% 
-  mutate(route_uniq = paste(country_num, state_num, route)) %>% # unique id for each route
-  group_by(year) %>% # group by year
-  summarize(n_routes = length(unique(route_uniq))) # count unique routes
+  mutate(route_unique = paste(country_num, state_num, route)) %>%  # unique routes
+  group_by(year) %>%  # group by year
+  summarize(n_routes = length(unique(route_unique)))  # count unique routes
 
-# plot
 ggplot(df_routes) +
-  geom_line(aes(year, n_routes), size = 1.2)
+  geom_line(aes(year, n_routes))
 ```
 
+![](fig1.png)
 
 ## Working with bird count data
 
-Tables with bird-count data can be built using the `bbs_build_*` functions
-(`bbs_build_10` for the 10-stop data, and `bbs_build_50` for the 50-stop data),
-e.g.
+Tables with bird-count data are built using the `bbs_build_*` functions
+(`bbs_build_10` for the 10-stop data and `bbs_build_50` for the 50-stop data).
 
 ```{r}
 # build 10-stop data for Canadian routes
-bbs_10 <- bbs_build_10(bbs_dir = '.', countries = 'Canada')
+bbs_cdn <- bbs_build_10(bbs_dir = ".", countries = 'Canada')
 ```
 
 We'll stick to the 10-stop data for the remainder of this vignette, but working
-with the 50-stop data is very similar (there are just more count columns).
+with the 50-stop data is generally the same (there are just more columns with
+bird counts).
 
-Let's take a look at the `bbs_10` table
+Let's take a glimpse at the `bbs_cdn` table.
 
 ```{r}
-tibble::glimpse(bbs_10)
+tibble::glimpse(bbs_cdn)
+#> Observations: 1,003,674
+#> Variables: 14
+#> $ route_data_id <int> 6174482, 6174482, 6174482, 6174482, 6174482, 617...
+#> $ country_num   <int> 124, 124, 124, 124, 124, 124, 124, 124, 124, 124...
+#> $ state_num     <int> 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, ...
+#> $ route         <int> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+#> $ rpid          <int> 101, 101, 101, 101, 101, 101, 101, 101, 101, 101...
+#> $ year          <int> 1972, 1972, 1972, 1972, 1972, 1972, 1972, 1972, ...
+#> $ aou           <int> 30, 40, 540, 700, 1320, 1370, 1400, 1420, 1430, ...
+#> $ count_10      <int> 0, 0, 5, 0, 8, 3, 1, 2, 1, 0, 0, 0, 0, 0, 0, 2, ...
+#> $ count_20      <int> 0, 0, 16, 2, 3, 0, 2, 1, 0, 0, 0, 1, 0, 0, 0, 1,...
+#> $ count_30      <int> 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, ...
+#> $ count_40      <int> 2, 0, 5, 0, 32, 0, 2, 8, 15, 1, 0, 0, 1, 5, 1, 1...
+#> $ count_50      <int> 0, 1, 3, 0, 5, 2, 2, 3, 0, 0, 1, 0, 0, 0, 0, 1, ...
+#> $ stop_total    <int> 1, 1, 14, 1, 11, 3, 4, 7, 3, 1, 1, 1, 1, 1, 2, 6...
+#> $ species_total <int> 2, 1, 30, 2, 48, 5, 7, 14, 16, 1, 1, 1, 1, 5, 2,...
 ```
 
+We'll ignore the first column for a moment. Columns 2-7 give the metadata needed
+to make sense of the bird count columns: `country_num`, `state_num`, `route`
+(only unique within states), `rpid` (indicates whether the run is a standard BBS
+survey or a within-year replicate), `year`, and `aou` (i.e. species).
 
-## Styles
+Each row in the table corresponds to a unique combination of these 6 columns, as
+do the codes in the first column `route_data_id`.
 
-The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
+Next we have the `count_*` columns, which give bird counts for the given species
+(binned into groups of 10-stops; 1-10, 11-20, ..., 41-50). Then, `stop_total`
+gives the number of stops out of 50 on which the species was observed, and
+`species_total` gives the total number of individuals of the species recorded on
+that run (i.e. summed across all stops).
 
-    output: 
-      rmarkdown::html_vignette:
-        css: mystyles.css
+For the remainder of this vignette, we'll use bird count tables to look at three
+things:
 
+- species distribution
+- species richness
+- species abundance
 
-You can enable figure captions by `fig_caption: yes` in YAML:
+### Species distribution
 
-    output:
-      rmarkdown::html_vignette:
-        fig_caption: yes
+Let's say we're interested in the distribution of the Western Meadowlark within
+the contiguous United States. We can find its American Ornithological Union
+species code (aou) in the metadata table `species`.
 
-Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
-
-## More Examples
-
-You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
-
-```{r, echo=FALSE, results='asis'}
-knitr::kable(head(mtcars, 10))
+```{r}
+species$aou[species$english_common_name == 'Western Meadowlark']
+#> [1] 5011
 ```
 
-Also a quote using `>`:
+We'll use the aou to build a table with 10-stop count data just for the Western
+Meadowlark in the United States (including counts of zero this time).
 
-> "He who gives up [code] safety for [code] speed deserves neither."
-([via](https://twitter.com/hadleywickham/status/504368538874703872))
+```{r}
+wm <- bbs_build_10(bbs_dir = ".", zeros = TRUE,
+                   countries = 'United States', aou = 5011)
+```
+
+There are different ways we could go about creating a distribution map. Let's
+say we want to plot all the routes in the contiguous United States, and colour
+routes differently depending on whether the Western Meadowlark has or has not
+been observed there. Here's one way.
+
+```{r, message=FALSE}
+wm_occur <- wm %>% 
+  left_join(regions) %>%  # join regions table to get state names
+  subset(state_name != "Alaska") %>%  # remove alaska
+  group_by(country_num, state_num, route) %>%  # group by unique routes
+  summarize(occur = ifelse(any(species_total > 0), TRUE, FALSE)) %>%  # test for occurrence
+  ungroup() %>%  # ungroup
+  left_join(routes)  # join routes table to get route coordinates
+```
+
+And finally, we'll plot the occurrence data on a map of the United States.
+
+```{r, fig.width=7, fig.height=3.6}
+states <- map_data("state") # get map of contiguous United States
+
+ggplot(states) + 
+  geom_polygon(aes(long, lat, group = group), fill = 'grey70', col = 'white') +
+  geom_point(data = wm_occur, aes(longitude, latitude, col = occur), size = 2) +
+  scale_color_brewer(palette = 'Set1', name = 'Observed')
+```
+
+![](fig2.png)
+
+### Species richness
+
+Let's compare bird species richness among Canadian provinces using the `bbs_cdn`
+table that we created above.
+
+First, we'll subset our table to only the survey runs that meet the BBS quality
+criteria (`run_type == 1`), so that we know we're comparing apples to apples.
+
+```{r, message=FALSE}
+bbs_cdn_r1 <- bbs_cdn %>% 
+  left_join(weather) %>%     # join weather table (run_type lives here)
+  subset(run_type == 1) %>%  # subset to run_type == 1
+  mutate(route_unique = paste(country_num, state_num, route)) # id unique routes
+```
+
+Next, we'll create a table with the total number of unique species and routes,
+by province.
+
+```{r}
+df_summary <- bbs_cdn_r1 %>% 
+  left_join(regions) %>%  # join to regions to get state/province names
+  group_by(state_name, state_num) %>%  # group by state
+  summarize(n_routes = length(unique(route_unique)), # summarize
+            n_species = length(unique(aou))) %>% 
+  ungroup() %>%  # ungroup
+  arrange(desc(n_species))  # arrange in descending order of n_species
+
+df_summary
+#> # A tibble: 13 x 4
+#>    state_name            state_num n_routes n_species
+#>    <chr>                     <int>    <int>     <int>
+#>  1 British Columbia             11      165       317
+#>  2 Alberta                       4      185       297
+#>  3 Manitoba                     45       83       283
+#>  4 Saskatchewan                 79      113       249
+#>  5 Ontario                      68      224       243
+#>  6 Quebec                       76      191       237
+#>  7 Northwest Territories        43       19       189
+#>  8 New Brunswick                56       45       183
+#>  9 Nova Scotia                  65       37       183
+#> 10 Yukon                        93       49       168
+#> 11 Newfoundland                 57       45       165
+#> 12 Prince Edward Island         75        4       136
+#> 13 Nunavut                      62        1        48
+```
+
+The Western provinces seem to have the highest species richness, but there seems
+to be a correlation between the number of observed species and the number of
+survey routes, which varies widely among provinces.
+
+To control for this variation, we'll examine species accumulation curves using
+the R package [`iNEXT`](https://github.com/JohnsonHsieh/iNEXT).
+
+```{r}
+library("iNEXT")
+```
+
+`iNEXT` can work with a few different data formats. We'll use the 'incidence
+frequency' format here. For each province we need a vector of length `n_species
++ 1`. The first element should be the total number of routes in that province
+(`n_routes`), and the remaining elements should be counts of the number of
+routes on which a given species has been detected (i.e. species-specific route
+incidence frequencies).
+
+We'll then need to arrange these vectors into a list that can be passed to
+`iNEXT`.
+
+```{r}
+# species-specific route incidence, by state/province
+df_freq <- bbs_cdn_r1 %>% 
+  group_by(state_num, aou) %>%  # group by state and species
+  summarize(n = length(unique(route_unique))) %>%  # count unique routes
+  ungroup()
+
+# arrange into list format for iNEXT, by state/province
+freq_l <- list()
+
+for (i in 1:nrow(df_summary)) {  # for each state/province...
+  
+  state_num_focal <- df_summary$state_num[i]   # focal state code
+  state_name_focal <- df_summary$state_name[i] # focal state name
+  n_routes_focal <- df_summary$n_routes[i]     # n_routes for focal state
+  
+  # vector of species-specific route incidence frequencies
+  aou_freq <- df_freq$n[df_freq$state_num == state_num_focal]
+  
+  # concatenate n_routes and route incidence frequencies, and assign to 
+  #  state-specific list element
+  freq_l[[state_name_focal]] <- c(n_routes_focal, aou_freq)
+}
+
+```
+
+Let's take a look at the first 15 entries of the first three list elements.
+
+```{r}
+lapply(freq_l[1:3], function(x) x[1:15])
+#> $`British Columbia`
+#>  [1] 165   7  10  37  11  13  43 111   1   1   7   3  18   6   1
+#> 
+#> $Alberta
+#>  [1] 185  12   1   3  69  75  69  90  80   1  13  82  62 127   1
+#> 
+#> $Manitoba
+#>  [1] 83  5 24 19 19 54 48  1  1  1 33  2  2 71 50
+```
+
+Looks good.
+
+Next, let's use `iNEXT` to examine species accumulation curves for a few select
+provinces.
+
+```{r, fig.width=7, fig.height=4}
+provs_inext <- iNEXT(freq_l[c('Alberta', 'Manitoba', 'Ontario')],
+                     datatype = 'incidence_freq', knot = 100, endpoint = 300)
+
+ggiNEXT(provs_inext) +
+  theme(text = element_text(size = 13),
+        legend.key.width = unit(0.9, 'cm'),
+        legend.spacing.y = unit(0, 'cm'),
+        legend.position = c(0.85, 0.27),
+        legend.background = element_blank())
+```
+
+![](fig3.png)
+
+Notice, even though Alberta has a higher observed species richness than
+Manitoba, as we saw in the `df_summary` table, Manitoba actually has a slightly
+higher predicted asymptotic species richness (i.e. assuming an infinite number
+of survey routes). Manitoba just hasn't been sampled as much.
+
+### Species abundance
+
+`TODO`
