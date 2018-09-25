@@ -110,13 +110,13 @@ data for all American states:
 \dontrun{
 
 # build whole dataset excluding counts of zero
-bbs <- bbs_build_10(bbs_dir = '.')
+bbs <- bbs_build_10(bbs_dir = ".")
 
 # build with Canadian routes only, including counts of zero
-bbs <- bbs_build_10(bbs_dir = '.', zeros = TRUE, countries = 'Canada')
+bbs <- bbs_build_10(bbs_dir = ".", zeros = TRUE, countries = 'Canada')
 
 # build for species Gray Jay (aou 4840), including counts of zero
-bbs <- bbs_build_10(bbs_dir = '.', zeros = TRUE, aou = 4840)
+bbs <- bbs_build_10(bbs_dir = ".", zeros = TRUE, aou = 4840)
 }
 
 }

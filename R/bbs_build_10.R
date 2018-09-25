@@ -100,13 +100,13 @@
 #' \dontrun{
 #' 
 #' # build whole dataset excluding counts of zero
-#' bbs <- bbs_build_10(bbs_dir = '.')
+#' bbs <- bbs_build_10(bbs_dir = ".")
 #' 
 #' # build with Canadian routes only, including counts of zero
-#' bbs <- bbs_build_10(bbs_dir = '.', zeros = TRUE, countries = 'Canada')
+#' bbs <- bbs_build_10(bbs_dir = ".", zeros = TRUE, countries = 'Canada')
 #' 
 #' # build for species Gray Jay (aou 4840), including counts of zero
-#' bbs <- bbs_build_10(bbs_dir = '.', zeros = TRUE, aou = 4840)
+#' bbs <- bbs_build_10(bbs_dir = ".", zeros = TRUE, aou = 4840)
 #' }
 #' 
 #' @importFrom  tibble tibble
@@ -117,15 +117,15 @@ bbs_build_10 <- function(bbs_dir, zeros = FALSE, countries = NULL,
   
   if ((!is.null(countries) | !is.null(states)) &
       (!is.null(bcr) | !is.null(strata))) {
-    stop('Cannot subset for both country/states AND bcr/strata.')
+    stop("Cannot subset for both country/states AND bcr/strata")
   }
   
-  ts_dir <- '/States/'
-  files_ts <- list.files(paste0(bbs_dir, ts_dir))
-  files_ts <- files_ts[grepl('\\.zip$', files_ts)]
+  ts_dir <- "States"
+  files_ts <- list.files(paste(bbs_dir, ts_dir, sep = "/"))
+  files_ts <- files_ts[grepl("\\.zip$", files_ts)]
   
   if (length(files_ts) == 0) {
-    stop('No zip files found within directory /States/')
+    stop("No zip files found within directory States/")
   }
   
   # subset based on geography
@@ -137,8 +137,8 @@ bbs_build_10 <- function(bbs_dir, zeros = FALSE, countries = NULL,
     regions$use <- FALSE
     
     if (!all(files_ts %in% regions$ten_stop_file)) {
-      warning(paste('One or more zip files within the /States/ directory is not',
-                    'listed in README.txt'))
+      warning(paste("One or more zip files within the States/ directory is not",
+                    "listed in README.txt"))
     }
     
     if (!is.null(countries)) {
@@ -175,17 +175,18 @@ bbs_build_10 <- function(bbs_dir, zeros = FALSE, countries = NULL,
       n_state <- nrow(regions)
       n_avail <- length(which(files_ts %in% regions$ten_stop_file))
       regions <- regions[regions$ten_stop_file %in% files_ts,]
-      warning(paste('Directory /States/ only contains', n_avail, 'of the',
-                    n_state, 'zip files that match the given geographic subset.',
-                    'Data returned is limited to available states.'))
+      warning(paste("Directory States/ only contains", n_avail, "of the",
+                    n_state, "zip files that match the given geographic subset.",
+                    "Data returned is limited to available states."))
     }
     
     files_ts <- regions$ten_stop_file
   }
   
-  paths_ts <- paste0(bbs_dir, ts_dir, files_ts)
+  paths_ts <- paste(bbs_dir, ts_dir, files_ts, sep = "/")
   bbs_l <- lapply(paths_ts, csv_unzip)
   bbs <- do.call(rbind.data.frame, bbs_l)
+  
   bbs$aou <- as.integer(bbs$aou)
   bbs$state_num <- as.integer(bbs$state_num)
   bbs$route <- as.integer(bbs$route)
