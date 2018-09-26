@@ -134,7 +134,7 @@ bbs_download <- function(dest, bbs_dir = NULL, countries = NULL, states = NULL,
       ts_files <- bbs_read_dir(paste(bbs_dir, ts_dir, sep = '/'))
       
       if (!is.null(countries) | !is.null(states)) {
-        ts_files <- ts_files[ts_files %in% zip_use$file_10]
+        ts_files <- ts_files[ts_files %in% zip_use$ten_stop_file]
       }
       
       bbs_download_util(bbs_dir, dest, subdir = ts_dir, dl_files = ts_files,
@@ -154,7 +154,7 @@ bbs_download <- function(dest, bbs_dir = NULL, countries = NULL, states = NULL,
       fs_files <- bbs_read_dir(paste(bbs_dir, fs_dir, sep = '/'))
       
       if (!is.null(countries) | !is.null(states)) {
-        fs_files <- fs_files[fs_files %in% zip_use$file_50]
+        fs_files <- fs_files[fs_files %in% zip_use$fifty_stop_file]
       }
       
       bbs_download_util(bbs_dir, dest, subdir = fs_dir, dl_files = fs_files,
