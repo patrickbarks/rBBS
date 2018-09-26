@@ -2,13 +2,13 @@
 #'
 #' Get a data frame with the names and codes for states/provinces/territories
 #' used in North American Breeding Bird Survey (BBS), and optionally, the names
-#' of the corresponding zip files containing 10-stop count data.
+#' of the corresponding zip files containing 10-stop and 50-stop count data.
 #'
 #' @param bbs_dir Directory from which to get data. Defaults to the USGS FTP
 #'   directory for the most recent BBS release. May alternatively be a path to a
 #'   local directory, or ftp address for an older BBS release.
-#' @param zip_files Include names of zip files containing 10-stop data? Defaults
-#'   to FALSE.
+#' @param zip_files Include names of zip files containing 10-stop and 50-stop
+#'   data? Defaults to FALSE.
 #' 
 #' @return
 #' A \code{data.frame} with the following columns:
@@ -19,6 +19,8 @@
 #'   
 #' If \code{zip_files = TRUE}, also includes the column:
 #'   \item{ten_stop_file}{name of zip file with 10-stop survey data (or
+#'   \code{NA} if region does not have a zip file)}
+#'   \item{fifty_stop_file}{name of zip file with 50-stop survey data (or
 #'   \code{NA} if region does not have a zip file)}
 #' 
 #' @details Note that not all regions have a zip file. As of 2017 there is no
@@ -53,11 +55,13 @@ bbs_meta_regions <- function(bbs_dir = NULL, zip_files = FALSE) {
   regions$country_name <- bbs_country(regions$country_num)
   regions <- regions[,c(1, 4, 2, 3)]
   
-  # add names of 10-stop zip archives
+  # add names of 10-stop and 50-stop zip archives
   if (zip_files == TRUE) {
     file_names <- bbs_files_10(bbs_dir = bbs_dir)
-    m <- match(regions$state_name, file_names$state_name)
-    regions$ten_stop_file <- file_names$ten_stop_file[m]
+    m10 <- match(regions$state_name, file_names$state_name)
+    regions$ten_stop_file <- file_names$ten_stop_file[m10]
+    m50 <- match(tolower(regions$state_name), df_zip$state_name)
+    regions$fifty_stop_file <- df_zip$fifty_stop_file[m50]
   }
   
   return(regions)

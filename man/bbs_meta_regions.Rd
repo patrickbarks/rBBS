@@ -11,8 +11,8 @@ bbs_meta_regions(bbs_dir = NULL, zip_files = FALSE)
 directory for the most recent BBS release. May alternatively be a path to a
 local directory, or ftp address for an older BBS release.}
 
-\item{zip_files}{Include names of zip files containing 10-stop data? Defaults
-to FALSE.}
+\item{zip_files}{Include names of zip files containing 10-stop and 50-stop
+data? Defaults to FALSE.}
 }
 \value{
 A \code{data.frame} with the following columns:
@@ -24,11 +24,13 @@ A \code{data.frame} with the following columns:
 If \code{zip_files = TRUE}, also includes the column:
   \item{ten_stop_file}{name of zip file with 10-stop survey data (or
   \code{NA} if region does not have a zip file)}
+  \item{fifty_stop_file}{name of zip file with 50-stop survey data (or
+  \code{NA} if region does not have a zip file)}
 }
 \description{
 Get a data frame with the names and codes for states/provinces/territories
 used in North American Breeding Bird Survey (BBS), and optionally, the names
-of the corresponding zip files containing 10-stop count data.
+of the corresponding zip files containing 10-stop and 50-stop count data.
 }
 \details{
 Note that not all regions have a zip file. As of 2017 there is no
