@@ -25,7 +25,7 @@ knitr::opts_chunk$set(
 The BBS is a large-scale bird monitoring program that was initiated in 1966 and
 currently encompasses over 4,600 active survey routes in North America. Each
 survey involves 50 three-minute point counts conducted at half-mile intervals
-along a 24.5-mile route, by a skilled volunteer.
+along a 24.5-mile route by a skilled volunteer.
 
 See more information at https://www.pwrc.usgs.gov/bbs/.
 
