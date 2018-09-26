@@ -6,7 +6,7 @@
 \usage{
 bbs_download(dest, bbs_dir = NULL, countries = NULL, states = NULL,
   meta = TRUE, ten_stop = TRUE, fifty_stop = FALSE,
-  migrant = FALSE, overwrite = FALSE, verbose = TRUE)
+  overwrite = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{dest}{Path to an existing local directory to download files to.}
@@ -15,22 +15,18 @@ bbs_download(dest, bbs_dir = NULL, countries = NULL, states = NULL,
 directory for the most recent BBS release. May alternatively be an FTP
 address for an older BBS release.}
 
-\item{countries}{Vector of countries to download 10-stop data for (e.g.
-\code{c('Canada', 'United States')}). Used only if \code{ten_stop = TRUE}.
-Defaults to all available. Case-insensitive. See Details.}
-
-\item{states}{Vector of states/provinces/territories to download 10-stop data
-for. Used only if \code{ten_stop = TRUE}. Defaults to all available.
+\item{countries}{Vector of countries to download 10- and/or 50-stop data for
+(e.g. \code{c('Canada', 'United States')}). Defaults to all available.
 Case-insensitive. See Details.}
+
+\item{states}{Vector of states/provinces/territories to download 10- and/or
+50-stop data for. Defaults to all available. Case-insensitive. See Details.}
 
 \item{meta}{Download top-level metadata files? Default is \code{TRUE}.}
 
 \item{ten_stop}{Download 10-stop data? Default is \code{TRUE}.}
 
 \item{fifty_stop}{Download 50-stop data? Default is \code{FALSE}.}
-
-\item{migrant}{Download data for migrant non-breeders? Default is
-\code{FALSE}.}
 
 \item{overwrite}{Overwrite files that already exist? Default is \code{FALSE}.}
 
@@ -47,27 +43,27 @@ For names to use in arguments \code{countries} and \code{states} see
 Note that country/state subsets are additive, so specifying
 
 \code{
-bbs_download('.', countries = 'Canada', states = 'Montana')
+bbs_download(".", countries = "Canada", states = "Montana")
 }
 
 will download data for all Canadian provinces/territories plus the state of
 Montana. The following lines will both download data for all American states:
 
-\code{bbs_download('.', countries = 'United States', states = 'Florida')} \cr
-\code{bbs_download('.', countries = 'United States')}
+\code{bbs_download(".", countries = "United States", states = "Florida")} \cr
+\code{bbs_download(".", countries = "United States")}
 }
 \examples{
 \dontrun{
 
 # download metadata and 10-stop data for Alaska and all of Canada
-bbs_download(dest = '.', countries = 'Canada', states = c('Alaska'))
+bbs_download(dest = ".", countries = "Canada", states = "Alaska")
 
 # download metadata and 10-stop data for Gulf Coast states
-gulf_states <- c('Alabama', 'Florida', 'Louisiana', 'Mississippi', 'Texas')
-bbs_download(dest = '.', states = gulf_states)
+gulf_states <- c("Alabama", "Florida", "Louisiana", "Mississippi", "Texas")
+bbs_download(dest = ".", states = gulf_states)
 
 # download metadata and 50-stop data for all regions
-bbs_download(dest = '.', ten_stop = FALSE, fifty_stop = TRUE)
+bbs_download(dest = ".", ten_stop = FALSE, fifty_stop = TRUE)
 }
 
 }
