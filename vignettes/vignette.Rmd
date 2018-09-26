@@ -404,11 +404,11 @@ library("iNEXT")
 ```
 
 `iNEXT` can work with a few different data formats. We'll use the 'incidence
-frequency' format here. For each province we need a vector of length `n_species
-+ 1`. The first element should be the total number of routes in that province
-(`n_routes`), and the remaining elements should be counts of the number of
-routes on which a given species has been detected (i.e. species-specific route
-incidence frequencies).
+frequency' format here. For each province we need a vector of length
+`n_species + 1`. The first element should be the total number of routes in that
+province (`n_routes`), and the remaining elements should be counts of the number
+of routes on which a given species has been detected (i.e. species-specific
+route incidence frequencies).
 
 We'll then need to arrange these vectors into a list that can be passed to
 `iNEXT`.
