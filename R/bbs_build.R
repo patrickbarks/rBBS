@@ -18,7 +18,7 @@ bbs_build <- function(bbs_dir, zeros = FALSE, countries = NULL,
   zip_files <- list.files(paste(bbs_dir, zip_dir, sep = "/"))
   zip_files <- zip_files[grepl("\\.zip$", zip_files)]
   
-  if (length(zip_dir) == 0) {
+  if (length(zip_files) == 0) {
     stop(paste('No .zip files found within directory', zip_dir))
   }
   
@@ -26,9 +26,7 @@ bbs_build <- function(bbs_dir, zeros = FALSE, countries = NULL,
   if (!is.null(countries) | !is.null(states) | !is.null(bcr) |
       !is.null(strata) | zeros == TRUE) {
     
-    zip_use <- switch(as.character(type),
-                      "10" = bbs_meta_regions(bbs_dir, zip_files = TRUE),
-                      "50" = df_zip)
+    zip_use <- bbs_meta_regions(bbs_dir, zip_files = TRUE)
     
     file_col <- switch(as.character(type),
                        "10" = "ten_stop_file",
@@ -134,8 +132,7 @@ bbs_build_zeros <- function(bbs_dir, zeros, countries, states, bcr, strata, aou,
   wx <- bbs_meta_weather(bbs_dir = bbs_dir)
   wx$route_unique <- bbs_route_unique(wx)
   
-  # for 50-stop data, subset to 1997
-  # note there is actually scattered 50-stop data prior to 1997...
+  # for 50-stop data, subset to 1997+
   if (type == "50") { wx <- wx[wx$year >= 1997,] }
   
   # nb to limit to states with zip files to prevent erroneous zeros
@@ -173,7 +170,7 @@ bbs_build_zeros <- function(bbs_dir, zeros, countries, states, bcr, strata, aou,
   out_j <- paste0(out$route_data_id, out$aou)
   bbs_j <- paste0(bbs$route_data_id, bbs$aou)
   
-  # match indices of all_rows and bbs
+  # match indices of out and bbs
   m <- match(out_j, bbs_j)
   m_i_not_na <- !is.na(m)
   m_not_na <- m[m_i_not_na]
@@ -185,7 +182,7 @@ bbs_build_zeros <- function(bbs_dir, zeros, countries, states, bcr, strata, aou,
              "stop_total", "species_total"),
     "50" = paste("stop", seq(1, 50, 1), sep = "_"))
   
-  # create matrix of counts (stop_* columns)
+  # create matrix of counts
   count_mat <- matrix(0L, nrow = nrow(out), ncol = length(count_col_names))
   count_col_bbs <- match(count_col_names, names(bbs))
   
@@ -199,5 +196,3 @@ bbs_build_zeros <- function(bbs_dir, zeros, countries, states, bcr, strata, aou,
   return(bbs)
 }
 
-  
-  
