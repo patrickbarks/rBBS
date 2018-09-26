@@ -14,7 +14,7 @@
 #' 
 #' @details
 #' Before the component columns are pasted together and reconverted to an
-#' integer, leadig zeros are added, where necessary, to ensure constant columns
+#' integer, leading zeros are added, where necessary, to ensure constant columns
 #' widths (and therefore unique final codes). The number of digits for each
 #' component column is:
 #'  - \code{country_num}: 3 digits

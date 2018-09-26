@@ -31,7 +31,7 @@ A \code{data.frame} with the following columns:
   route}
   \item{end_temp}{temperature recorded at the end of the run of the route}
   \item{temp_scale}{scale in which the temperature was recorded: F
-  (Fahrenheit), C (Celcius)}
+  (Fahrenheit), C (Celsius)}
   \item{start_wind}{Beaufort wind speed code recorded at the beginning of the
   run of the route (see BBS file \emph{weathercodes.txt})}
   \item{end_wind}{Beaufort wind speed code recorded at the end of the run of
