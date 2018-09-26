@@ -1,4 +1,4 @@
-#' Add a column to a BBS table identifying unique routes survey-wide
+#' Identify survey-wide unique BBS routes from a BBS table
 #' 
 #' The \code{route} column in a variety of BBS tables only identifies unique
 #' routes within states. This function creates route identifiers that are unique
@@ -8,12 +8,9 @@
 #'
 #' @param df A \code{data.frame} created by a \code{bbs_*} function that
 #'   includes columns \code{country_num}, \code{state_num}, and \code{route}.
-#' @param col_name Name for the new column. Defaults to "route_unique".
 #'
 #' @return
-#' \code{df} with an additional column that identifies unique routes
-#' survey-wide. The additional column is called \code{name} and is of class
-#' \code{integer}.
+#' An integer vector identifying unique routes survey-wide.
 #' 
 #' @details
 #' Before the component columns are pasted together and reconverted to an
@@ -38,20 +35,14 @@
 #' weather <- bbs_meta_weather(bbs_dir = ".")
 #' 
 #' # add a column identifying unique routes
-#' weather <- add_route_unique(weather)
+#' weather$route_unique <- bbs_route_unique(weather)
 #' }
 #' 
-#' @export add_route_unique
-add_route_unique <- function(df, col_name = "route_unique") {
+#' @export bbs_route_unique
+bbs_route_unique <- function(df) {
   
   if (!("data.frame" %in% class(df) | "tbl_df" %in% class(df))) {
     stop("Expecting df to be of class data.frame (and/or tbl_df)")
-  }
-  if (length(col_name) != 1 | class(col_name) != 'character') {
-    stop("Argument name should be a single character-string")
-  }
-  if (col_name %in% names(df)) {
-    stop("Argument name matches an existing column of df")
   }
     
   x_req <- c("country_num", "state_num", "route")
@@ -61,7 +52,7 @@ add_route_unique <- function(df, col_name = "route_unique") {
          paste(x_req, collapse = ", ")))
   }
   
-  df[[col_name]] <- as.integer(
+  x <- as.integer(
     paste0(
       formatC(df$country_num, width = 3, flag = '0'),
       formatC(df$state_num, width = 2, flag = '0'),
@@ -69,5 +60,5 @@ add_route_unique <- function(df, col_name = "route_unique") {
     )
   )
   
-  return(df)
+  return(x)
 }
