@@ -24,9 +24,8 @@ knitr::opts_chunk$set(
 
 The BBS is a large-scale bird monitoring program that was initiated in 1966 and
 currently encompasses over 4,600 active survey routes in North America. Each
-survey is conducted by a skilled volunteer during the height of the breeding
-season, and entails 50 three-minute point counts conducted at half-mile
-intervals along a 24.5-mile route.
+survey involves 50 three-minute point counts conducted at half-mile intervals
+along a 24.5-mile route, by a skilled volunteer.
 
 See more information at https://www.pwrc.usgs.gov/bbs/.
 
@@ -233,7 +232,7 @@ routes has changed over time.
 
 ```{r, fig.width=7}
 df_routes <- weather %>% 
-  mutate(route_unique = paste(country_num, state_num, route)) %>%  # unique routes
+  mutate(route_unique = bbs_route_unique(.)) %>%  # id unique routes
   group_by(year) %>%  # group by year
   summarize(n_routes = length(unique(route_unique)))  # count unique routes
 
@@ -300,7 +299,7 @@ things:
 - species richness
 - species abundance
 
-### Species distribution
+## Species distribution
 
 Let's say we're interested in the distribution of the Western Meadowlark within
 the contiguous United States. We can find its American Ornithological Union
@@ -324,7 +323,7 @@ say we want to plot all the routes in the contiguous United States, and colour
 routes differently depending on whether the Western Meadowlark has or has not
 been observed there. Here's one way.
 
-```{r, message=FALSE}
+```{r}
 wm_occur <- wm %>% 
   left_join(regions) %>%  # join regions table to get state names
   subset(state_name != "Alaska") %>%  # remove alaska
@@ -347,19 +346,19 @@ ggplot(states) +
 
 ![](fig2.png)
 
-### Species richness
+## Species richness
 
 Let's compare bird species richness among Canadian provinces using the `bbs_cdn`
 table that we created above.
 
-First, we'll subset our table to only the survey runs that meet the BBS quality
+First, we'll subset our table to only the survey runs that met the BBS quality
 criteria (`run_type == 1`), so that we know we're comparing apples to apples.
 
-```{r, message=FALSE}
+```{r}
 bbs_cdn_r1 <- bbs_cdn %>% 
   left_join(weather) %>%     # join weather table (run_type lives here)
   subset(run_type == 1) %>%  # subset to run_type == 1
-  mutate(route_unique = paste(country_num, state_num, route)) # id unique routes
+  mutate(route_unique = bbs_route_unique(.)) # id unique routes
 ```
 
 Next, we'll create a table with the total number of unique species and routes,
@@ -478,6 +477,186 @@ Manitoba, as we saw in the `df_summary` table, Manitoba actually has a slightly
 higher predicted asymptotic species richness (i.e. assuming an infinite number
 of survey routes). Manitoba just hasn't been sampled as much.
 
-### Species abundance
+## Species abundance
 
-`TODO`
+Say we want to examine changes in the abundance of the Sedge Wren over the last
+decade. We'll start by finding its aou code using the `species` table, and then
+building a 10-stop table with Sedge Wren counts (including zeros).
+
+```{r}
+species$aou[species$english_common_name == 'Sedge Wren']
+#> [1] 7240
+
+bbs_sw <- bbs_build_10(bbs_dir = ".", aou = 7240, zeros = TRUE, years = 2005:2015)
+```
+
+Next we'll join the `weather` table and subset to only those runs that met the
+BBS quality standard (`run_type == 1`).
+
+```{r}
+bbs_sw_r1 <- bbs_sw %>% 
+  left_join(weather) %>% 
+  subset(run_type == 1)
+```
+
+Next, we'll calculate the mean `species_total` by year and state, first joining
+the `regions` table so that we can work with state names rather than codes.
+
+```{r}
+state_year_means <- bbs_sw_r1 %>% 
+  left_join(regions) %>% 
+  group_by(year, state_name, state_num) %>% 
+  summarize(mean_count = mean(species_total)) %>% 
+  ungroup()
+```
+
+Now we'll plot the data, first excluding states in which the Sedge Wren was
+never observed.
+
+```{r, fig.width=7, fig.height=5}
+# codes for states where the sedge wren has been observed
+state_num_obs <- unique(bbs_sw$state_num[bbs_sw$species_total > 0])
+
+# subset state_year_means to states where observed
+state_year_means_obs <- state_year_means %>% 
+  subset(state_num %in% state_num_obs)
+
+# plot
+ggplot(state_year_means_obs, aes(year, mean_count)) +
+  geom_point() +
+  facet_wrap(~ state_name) +
+  scale_x_continuous(breaks = seq(2005, 2015, 2)) +
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.5))
+```
+
+![](fig4.png)
+
+The plot above gives us a quick picture of how Sedge Wren abundance varies from
+region to region, and how abundance has changed over the last decade. But to
+formally model population abundance and trends we need more nuance.
+
+Formal BBS analyses by researchers at the USGS are done using Bayesian
+hierarchical models that control for:
+
+- variation among obsevers,
+- novice-observer effects,
+- spatial effects at the level of physiographic strata,
+- year-within-strata effects,
+- overdispered counts, and
+- variation in the size of the modelled regions
+
+See [Sauer et al. 2013](http://fwspubs.org/doi/abs/10.3996/nafa.79.0001) for more information.
+
+Here we'll keep things a bit more simple. Our goal will be to fit a generalized
+linear mixed model of the form:
+
+```{r}
+glmer(species_total ~ novice_observer + year +
+        (year | state) +
+        (1 | observer) +
+        (1 | overdispersion),
+      family = poisson(link = "log"))
+```
+
+We'll start by using the `weather` table to create a `novice_observer` variable,
+which has a value of `TRUE` for an observer's very first year of participation,
+or `FALSE` otherwise.
+
+```{r}
+obs_df <- weather %>% 
+  group_by(obs_n) %>% 
+  mutate(novice_observer = ifelse(year == min(year), TRUE, FALSE)) %>% 
+  ungroup() %>% 
+  select(route_data_id, obs_n, novice_observer)
+```
+
+Next we'll subset our Sedge Wren counts table `bbs_sw_r1` to only those states
+that have at least a few nonzero counts. To help ensure model convergence,
+we'll arbitrarily set a threshold of 5 or more surveys with nonzero counts for
+a state to be included.
+
+```{r}
+bbs_sw_r1_sub <- bbs_sw_r1 %>% 
+  group_by(state_num) %>% 
+  mutate(n_survey_pos = length(route_data_id[species_total > 0])) %>%
+  ungroup() %>% 
+  filter(n_survey_pos >= 5)
+```
+
+Finally, we'll center `year` to have a mean of zero (helps with model
+convergence), add a column for the overdispersion effect (one way to model
+overdisperion with a Poisson distribution is to use a random effect with a
+unique element for every observation), join observer data from `obs_df`, and
+join the `regions` table so that we can use state names rather than codes.
+
+```{r}
+bbs_sw_mod <- bbs_sw_r1_sub %>% 
+  mutate(overdisp = 1:n()) %>% 
+  mutate(year_center = year - mean(year)) %>% 
+  left_join(obs_df) %>% 
+  left_join(regions)
+```
+
+Whew. We're finally ready to fit our model! We'll use the `lme4` library.
+
+```{r}
+library(lme4)
+
+mod <- glmer(species_total ~ novice_observer + year_center +
+               (year_center | state_name) +
+               (1 | obs_n) +
+               (1 | overdisp),
+             family = poisson(link = "log"),
+             data = bbs_sw_mod)
+
+summary(mod)$coefficients
+#>                       Estimate Std. Error   z value     Pr(>|z|)
+#> (Intercept)         -3.4762638 0.54577464 -6.369412 1.897538e-10
+#> novice_observerTRUE -0.1620199 0.11392609 -1.422149 1.549830e-01
+#> year_center         -0.1172581 0.02084107 -5.626302 1.841144e-08
+```
+
+Based on the summary table, we can see that the `year_center` term was
+significantly negative, indicating overall declines in counts of the Sedge Wren
+over the last decade.
+
+We can convert this slope to a geometric rate of population change using:
+
+```{r}
+grand_slope <- fixef(mod)[3]
+100 * (exp(grand_slope) - 1)
+#> year_center 
+#>   -11.06444
+```
+
+This suggests that on average, Sedge Wren populations have declined by 11% per
+year over the period 2005-2015. For reference, the official BBS analyses suggest
+a figure of 3.4% decline per year.
+
+You can see the official 2015 results at https://www.mbr-pwrc.usgs.gov/bbs/specl15.html
+
+Finally, let's examine geometric population trends by state.
+
+```{r}
+ranef(mod)$state_name %>% 
+  rownames_to_column('state_name') %>% 
+  mutate(trend = 100 * (exp(grand_slope + year_center) - 1))
+#>      state_name (Intercept)  year_center      trend
+#> 1       Alberta -1.89907417 -0.001235859 -11.174283
+#> 2      Illinois -0.07670816 -0.034836241 -14.109277
+#> 3       Indiana -0.91567343 -0.042409551 -14.757297
+#> 4          Iowa  1.45247388  0.002255639 -10.863607
+#> 5        Kansas -1.42679484 -0.018105386 -12.660163
+#> 6      Manitoba  3.96962660  0.078868430  -3.766214
+#> 7      Michigan  1.03013114 -0.048430128 -15.268965
+#> 8     Minnesota  4.21759571  0.018748515  -9.381301
+#> 9      Missouri -0.42307079  0.011008707 -10.079965
+#> 10     Nebraska  0.36982900  0.003170900 -10.781986
+#> 11 North Dakota  3.53086035  0.134900582   1.779901
+#> 12         Ohio -1.36189295 -0.005317240 -11.536076
+#> 13      Ontario  0.09742448  0.031300899  -8.236651
+#> 14 Saskatchewan  0.91129424  0.035861412  -7.817208
+#> 15 South Dakota  1.92729080  0.052680258  -6.253688
+#> 16    Wisconsin  3.15937854 -0.034480423 -14.078710
+```
+
