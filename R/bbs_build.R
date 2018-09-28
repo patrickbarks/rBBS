@@ -1,5 +1,6 @@
 
 #' @noRd
+#' @importFrom tibble add_column
 bbs_build <- function(bbs_dir, zeros = FALSE, countries = NULL,
                       states = NULL, bcr = NULL, strata = NULL,
                       aou = NULL, years = NULL, type) {
@@ -110,6 +111,16 @@ bbs_build <- function(bbs_dir, zeros = FALSE, countries = NULL,
     bbs <- bbs[bbs$aou %in% as.integer(aou),]
   }
   
+  # add route_data_id col if necessary (older BBS releases include it in
+  #  the weather table but not the 10- or 50-stop files)
+  if (!"route_data_id" %in% names(bbs)) {
+    wx <- bbs_meta_weather(bbs_dir = bbs_dir)
+    wx_route_unique <- bbs_route_unique(wx)
+    bbs_route_unique <- bbs_route_unique(bbs)
+    m <- match(bbs_route_unique, wx_route_unique)
+    bbs <- add_column(bbs, route_data_id = wx$route_data_id[m], .before = 1)
+  }
+  
   if (zeros == TRUE) {
     bbs <- bbs_build_zeros(bbs_dir = bbs_dir, zeros = zeros,
                            countries = countries, states = states, bcr = bcr,
@@ -122,21 +133,23 @@ bbs_build <- function(bbs_dir, zeros = FALSE, countries = NULL,
 }
 
 
+
+
 #' @noRd
-#' @importFrom tibble tibble
 #' @importFrom tibble as_tibble
 bbs_build_zeros <- function(bbs_dir, zeros, countries, states, bcr, strata, aou,
                             years, type, zip_use, routes, bbs) {
   
   # get weather metadata
   wx <- bbs_meta_weather(bbs_dir = bbs_dir)
-  wx$route_unique <- bbs_route_unique(wx)
   
   # for 50-stop data, subset to 1997+
   if (type == "50") { wx <- wx[wx$year >= 1997,] }
   
   # nb to limit to states with zip files to prevent erroneous zeros
   wx <- wx[wx$state_num %in% zip_use$state_num,]
+  
+  wx$route_unique <- bbs_route_unique(wx)
   
   if (!is.null(bcr) | !is.null(strata)) {
     wx <- wx[wx$route_unique %in% routes$route_unique,]
@@ -156,14 +169,15 @@ bbs_build_zeros <- function(bbs_dir, zeros, countries, states, bcr, strata, aou,
   n_wx <- nrow(wx)
   
   # all combinations of aou and route_year_rpid
-  out <- tibble(
+  out <- data.frame(
     route_data_id = rep(wx$route_data_id, n_aou),
     country_num = rep(wx$country_num, n_aou),
     state_num = rep(wx$state_num, n_aou),
     route = rep(wx$route, n_aou),
     rpid = rep(wx$rpid, n_aou),
     year = rep(wx$year, n_aou),
-    aou = unlist(lapply(sort(aou_unique), rep, times = n_wx))
+    aou = unlist(lapply(sort(aou_unique), rep, times = n_wx)),
+    stringsAsFactors = FALSE
   )
   
   # create indices to match on (route-year-rpid-aou)
@@ -191,7 +205,7 @@ bbs_build_zeros <- function(bbs_dir, zeros, countries, states, bcr, strata, aou,
   }
   
   colnames(count_mat) <- count_col_names
-  bbs <- as_tibble(cbind(out, count_mat))
+  bbs <- as_tibble(cbind.data.frame(out, count_mat, stringsAsFactors = FALSE))
   
   return(bbs)
 }
