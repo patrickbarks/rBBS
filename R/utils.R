@@ -17,8 +17,6 @@ bbs_read_dir <- function(dir) {
 bbs_download_util <- function(bbs_dir, dest, subdir, dl_files, file_type,
                               overwrite, verbose) {
   
-  
-  
   no_overwrite <- character(0)
   dest_path <- paste(dest, subdir, dl_files, sep = '/')
   
@@ -27,7 +25,7 @@ bbs_download_util <- function(bbs_dir, dest, subdir, dl_files, file_type,
       no_overwrite <- append(no_overwrite, dl_files[i])
     } else {
       message(paste('Downloading', file_type, 'file:', dl_files[i]))
-      curl_download(paste(bbs_dir, subdir, dl_files[i], sep = '/'), dest_path)
+      curl_download(paste(bbs_dir, subdir, dl_files[i], sep = '/'), dest_path[i])
     }
   }
   
