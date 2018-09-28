@@ -65,8 +65,8 @@ csv_unzip <- function(zip_path) {
     stop('Zip archive appears to contain more than one csv file')
   }
   
-  dat <- suppressMessages(read_csv(paste(temp_dir, file_csv, sep = '/'),
-                                   na = c('NA', 'NULL'),
+  dat <- suppressMessages(read_csv(paste(temp_dir, file_csv, sep = "/"),
+                                   na = c("NA", "NULL", "N"),
                                    progress = FALSE))
   
   names(dat) <- bbs_col(names(dat))
@@ -203,6 +203,7 @@ bbs_col_switch <- function(x) {
          'runtype' = 'run_type',
          'stoptotal' = 'stop_total',
          'speciestotal' = 'species_total',
+         'landtypeid' = 'land_type_id',
          x)
 }
 
