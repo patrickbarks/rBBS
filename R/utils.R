@@ -17,11 +17,13 @@ bbs_read_dir <- function(dir) {
 bbs_download_util <- function(bbs_dir, dest, subdir, dl_files, file_type,
                               overwrite, verbose) {
   
+  
+  
   no_overwrite <- character(0)
-  dest_path <- paste(dest, subdir, dl_files[i], sep = '/')
+  dest_path <- paste(dest, subdir, dl_files, sep = '/')
   
   for(i in seq_along(dl_files)) {
-    if (overwrite == FALSE & file.exists(dest_path)) {
+    if (overwrite == FALSE & file.exists(dest_path[i])) {
       no_overwrite <- append(no_overwrite, dl_files[i])
     } else {
       message(paste('Downloading', file_type, 'file:', dl_files[i]))
