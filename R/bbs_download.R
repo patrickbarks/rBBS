@@ -138,10 +138,16 @@ bbs_download <- function(dest, bbs_dir = NULL, countries = NULL, states = NULL,
     ## download 50-stop files
     if (fifty_stop == TRUE) {
       
-      fs_dir <- '50-StopData/1997ToPresent_SurveyWide/'
+      fs_dir1 <- '50-StopData'
+      fs_dir2 <- '1997ToPresent_SurveyWide/'
+      fs_dir <- paste(fs_dir1, fs_dir2, sep = "/")
       
-      if (!dir.exists(paste(dest, fs_dir, sep = '/'))) {
-        dir.create(paste(dest, fs_dir, sep = '/'), recursive = TRUE)
+      if (!dir.exists(paste(dest, fs_dir1, sep = '/'))) {
+        dir.create(paste(dest, fs_dir1, sep = '/'))
+      }
+      
+      if (!dir.exists(paste(dest, fs_dir1, fs_dir2, sep = '/'))) {
+        dir.create(paste(dest, fs_dir1, fs_dir2, sep = '/'))
       }
       
       fs_files <- bbs_read_dir(paste(bbs_dir, fs_dir, sep = '/'))
