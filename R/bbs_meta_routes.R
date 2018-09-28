@@ -51,6 +51,10 @@ bbs_meta_routes <- function(bbs_dir = NULL) {
   }
   
   out <- csv_unzip(paste(bbs_dir, "routes.zip", sep = '/'))
+  
+  out$country_num <- as.integer(out$country_num)
+  out$state_num <- as.integer(out$state_num)
+  out$route <- as.integer(out$route)
   out$active <- as.logical(out$active)
   
   return(out)
