@@ -59,8 +59,6 @@ csv_unzip <- function(zip_path) {
     read_csv(zip_path, na = c("NA", "NULL", "N"), progress = FALSE)
   )
   
-  names(dat) <- bbs_col(names(dat))
-  
   return(dat)
 }
 
@@ -88,7 +86,6 @@ read_bbs_txt <- function(txt_file) {
   delim <- grep("^-", txt_lines)
   if (length(delim) == 2) { delim <- delim[2] } # for RegionCodes.txt
   col_names <- strsplit(txt_lines[delim - 1], split = '[[:blank:]]+')[[1]]
-  col_names <- bbs_col(col_names)
   col_dashes <- strsplit(txt_lines[delim], split = '[[:blank:]]+')[[1]]
   col_widths <- nchar(col_dashes) + 1
   

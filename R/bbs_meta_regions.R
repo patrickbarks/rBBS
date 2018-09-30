@@ -41,6 +41,7 @@
 #' # get from local working directory
 #' regions <- bbs_meta_regions(bbs_dir = '.')
 #' }
+#' @importFrom  tibble add_column
 #' @export bbs_meta_regions
 bbs_meta_regions <- function(bbs_dir = NULL, zip_files = FALSE) {
   
@@ -50,10 +51,10 @@ bbs_meta_regions <- function(bbs_dir = NULL, zip_files = FALSE) {
   
   # read RegionCodes.txt
   regions <- read_bbs_txt(paste(bbs_dir, 'RegionCodes.txt', sep = '/'))
-  
-  regions$state_name <- bbs_state(regions$state_name)
-  regions$country_name <- bbs_country(regions$country_num)
-  regions <- regions[,c(1, 4, 2, 3)]
+  regions <- bbs_standardize(regions)
+  regions <- add_column(regions,
+                        country_name = bbs_country(regions$country_num),
+                        .after = 1)
   
   # add names of 10-stop and 50-stop zip archives
   if (zip_files == TRUE) {

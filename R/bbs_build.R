@@ -93,10 +93,7 @@ bbs_build <- function(bbs_dir, zeros = FALSE, countries = NULL,
   zip_paths <- paste(bbs_dir, zip_dir, zip_files, sep = '/')
   bbs_l <- lapply(zip_paths, csv_unzip)
   bbs <- do.call(rbind.data.frame, bbs_l)
-  
-  bbs$aou <- as.integer(bbs$aou)
-  bbs$state_num <- as.integer(bbs$state_num)
-  bbs$route <- as.integer(bbs$route)
+  bbs <- bbs_standardize(bbs)
   
   if (!is.null(bcr) | !is.null(strata)) {
     route_unique <- bbs_route_unique(bbs)

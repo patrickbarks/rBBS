@@ -38,7 +38,8 @@ bbs_meta_bcr <- function(bbs_dir = NULL) {
     bbs_dir <- bbs_ftp()
   }
   
-  df <- read_bbs_txt(txt_file = paste(bbs_dir, "BCR.txt", sep = '/'))
+  out <- read_bbs_txt(paste(bbs_dir, "BCR.txt", sep = "/"))
+  out <- bbs_standardize(out)
   
-  return(df)
+  return(out)
 }

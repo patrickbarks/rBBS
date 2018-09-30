@@ -71,15 +71,7 @@ bbs_meta_weather <- function(bbs_dir = NULL) {
   }
   
   out <- csv_unzip(paste(bbs_dir, "Weather.zip", sep = '/'))
-  
-  out$state_num <- as.integer(out$state_num)
-  out$route <- as.integer(out$route)
-  out$assistant <- as.logical(out$assistant)
-  out$run_type <- as.integer(out$run_type)
-  
-  if ('quality_current_id' %in% names(out)) { # column only in newer releases
-    out$quality_current_id <- as.logical(out$quality_current_id)
-  }
+  out <- bbs_standardize(out)
   
   return(out)
 }
