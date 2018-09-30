@@ -38,41 +38,29 @@ bbs_download_util <- function(bbs_dir, dest, subdir, dl_files, file_type,
 }
 
 
-#' @importFrom utils unzip
+
 #' @importFrom curl curl_download
 #' @importFrom readr read_csv
 #' @noRd
 csv_unzip <- function(zip_path) {
-  
+
   zip_path_split <- strsplit(zip_path, '/+')[[1]]
   file_zip <- zip_path_split[length(zip_path_split)]
-  file_csv <- gsub('\\.zip', '\\.csv', file_zip)
-  temp_dir <- paste0(tempdir(), '/', paste(sample(letters, 6), collapse = ''))
-  dir.create(temp_dir)
-  
-  if(grepl('^http:|^ftp:', zip_path)) {
-    temp_file <- tempfile()
-    curl_download(zip_path, temp_file, quiet = FALSE)
-    unzip(temp_file, exdir = temp_dir)
-    unlink(temp_file)
-  } else {
-    unzip(zip_path, exdir = temp_dir)
+
+  # if zip_path ftp or http, download
+  if (grepl('^ftp:|^http:|^https:', zip_path)) {
+    temp <- tempdir()
+    local_zip_path <- paste(temp, file_zip, sep = "/")
+    curl_download(zip_path, local_zip_path, quiet = FALSE)
+    zip_path <- local_zip_path
   }
   
-  file_csv <- list.files(temp_dir)
-  file_csv <- file_csv[grep('\\.csv$', file_csv)]
-  
-  if (length(file_csv) > 1) {
-    stop('Zip archive appears to contain more than one csv file')
-  }
-  
-  dat <- suppressMessages(read_csv(paste(temp_dir, file_csv, sep = "/"),
-                                   na = c("NA", "NULL", "N"),
-                                   progress = FALSE))
+  dat <- suppressMessages(
+    read_csv(zip_path, na = c("NA", "NULL", "N"), progress = FALSE)
+  )
   
   names(dat) <- bbs_col(names(dat))
   
-  unlink(temp_dir)
   return(dat)
 }
 
@@ -113,6 +101,7 @@ read_bbs_txt <- function(txt_file) {
   # convert to tibble
   return(as_tibble(df))
 }
+
 
 
 #' Get the names of state-specific zip files containing 10-stop count data from
