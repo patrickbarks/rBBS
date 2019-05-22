@@ -15,30 +15,19 @@ bbs_standardize <- function(df) {
     df$state_name <- bbs_state(df$state_name)
   }
   
-  # standardize column types
-  if ("aou" %in% names(df)) {
-    df$aou <- as.integer(df$aou)
-  }
-  if ("country_num" %in% names(df)) {
-    df$country_num <- as.integer(df$country_num)
-  }
-  if ("state_num" %in% names(df)) {
-    df$state_num <- as.integer(df$state_num)
-  }
-  if ("route" %in% names(df)) {
-    df$route <- as.integer(df$route)
-  }
-  if ("assistant" %in% names(df)) {
-    df$assistant <- as.logical(df$assistant)
-  }
-  if ("run_type" %in% names(df)) {
-    df$run_type <- as.integer(df$run_type)
-  }
-  if ("active" %in% names(df)) {
-    df$active <- as.logical(df$active)
-  }
-  if ("quality_current_id" %in% names(df)) {
-    df$quality_current_id <- as.logical(df$quality_current_id)
+  # integerize select columns
+  cols_int <- c("aou", "country_num", "state_num", "route", "rpid",
+                "year", "stratum", "bcr", "assistant", "run_type", "active",
+                "route_type_id", "route_type_detail_id", "quality_current_id",
+                "stop_total", "species_total", "route_data_id",
+                "month", "day", "obs_n", "total_spp", "start_temp", "end_temp",
+                "start_wind", "end_wind", "start_sky", "end_sky",
+                "start_time", "end_time",
+                paste("count", seq(10, 50, 10), sep = "_"),
+                paste("stop", seq(1, 50, 1), sep = "_"))
+  
+  if (any(names(df) %in% cols_int)) {
+    df <- integerize(df, intersect(names(df), cols_int))
   }
   
   return(df)
