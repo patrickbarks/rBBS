@@ -198,7 +198,9 @@ bbs_build_zeros <- function(bbs_dir, zeros, countries, states, bcr, strata, aou,
   count_col_bbs <- match(count_col_names, names(bbs))
   
   for(i in seq_along(count_col_bbs)) {
-    count_mat[m_i_not_na,i] <- unlist(bbs[m_not_na, count_col_bbs[i]])
+    count_mat[m_i_not_na,i] <- as.integer(
+      unlist(bbs[m_not_na, count_col_bbs[i]])
+    )
   }
   
   colnames(count_mat) <- count_col_names
