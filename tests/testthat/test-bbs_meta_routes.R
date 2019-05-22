@@ -13,5 +13,5 @@ test_that("bbs_meta_routes works correctly", {
   expect_is(routes$stratum, "integer")
   expect_is(routes$bcr, "integer")
   expect_is(routes$latitude, "numeric")
-  expect_is(routes$active, "logical")
+  expect_is(routes$active, "integer")
 })
