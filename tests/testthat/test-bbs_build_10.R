@@ -4,10 +4,23 @@ test_that("bbs_build_10 works correctly", {
   bbs_dir <- paste0(system.file("testdata", package = "rBBS"), '/')
   
   year_sub <- 2000:2015
+  aou_sub <- c(70, 100, 370)
+  strata_sub <- 99
   
   dat_10 <- bbs_build_10(bbs_dir, states = 'Nunavut')
-  dat_10s <- bbs_build_10(bbs_dir, states = 'Nunavut', years = year_sub)
   dat_10z <- bbs_build_10(bbs_dir, zeros = TRUE, states = 'Nunavut')
+  
+  dat_10s1 <- bbs_build_10(bbs_dir, states = 'Nunavut', years = year_sub)
+  dat_10s2 <- bbs_build_10(bbs_dir, states = 'Nunavut', aou = aou_sub)
+  
+  expect_warning(
+    dat_10s3 <- bbs_build_10(bbs_dir, strata = strata_sub)
+  )
+  expect_error(
+    bbs_build_10(bbs_dir = bbs_dir, states = 'Nunavut', bcr = 10)
+  )
+  
+  dat_10s3 <- merge(dat_10s3, bbs_meta_routes(bbs_dir))
   
   col_classes_10 <- vapply(dat_10, class, '', USE.NAMES = FALSE)
   col_classes_10z <- vapply(dat_10z, class, '', USE.NAMES = FALSE)
@@ -25,13 +38,13 @@ test_that("bbs_build_10 works correctly", {
   expect_true(all(col_classes_10 == 'integer'))
   expect_true(all(col_classes_10z == 'integer'))
   
-  expect_true(nrow(dat_10) > nrow(dat_10s))
+  expect_true(nrow(dat_10) > nrow(dat_10s1))
   expect_true(nrow(dat_10z) > nrow(dat_10))
   
   expect_true(all(col_names %in% names(dat_10)))
   expect_true(all(col_names %in% names(dat_10z)))
   
-  expect_true(all(dat_10s$year %in% year_sub))
-  
-  expect_error(bbs_build_10(bbs_dir = bbs_dir, states = 'Nunavut', bcr = 10))
+  expect_true(all(dat_10s1$year %in% year_sub))
+  expect_true(all(dat_10s2$aou %in% aou_sub))
+  expect_true(all(dat_10s3$strata %in% strata_sub))
 })
