@@ -1,25 +1,25 @@
 context("bbs_download")
 
 test_that("bbs_download works correctly", {
-  bbs_dir <- paste0(system.file("testdata", package = "rBBS"), '/')
   
   temp <- tempdir()
-  temp_sub <- paste(sample(letters, 6), collapse = "")
-  temp_path <- paste(temp, temp_sub, sep = "/")
-  temp_states <- paste(temp_path, "States", sep = "/")
   
-  if (!dir.exists(temp_states)) {
-    dir.create(temp_states, recursive = TRUE)
-  }
+  temp_10 <- paste(temp, "States", sep = "/")
+  temp_50 <- paste(temp, "50-StopData/1997ToPresent_SurveyWide", sep = "/")
   
-  bbs_download(dest = temp_path, meta = FALSE, states = 'Nunavut')
-  nunavut <- csv_unzip(paste(temp_states, "Nunavut.zip", sep = "/"))
-  
-  expect_is(nunavut, "data.frame")
-  expect_is(nunavut, "tbl_df")
-  
-  expect_error(bbs_download(bbs_dir = temp_sub, states = 'Nunavut', bcr = 10))
-  
-  unlink(temp_states)
-  unlink(temp_path)
+  bbs_download(dest = temp, meta = FALSE, fifty_stop = TRUE,
+               states = 'Nunavut')
+
+  expect_message(
+    bbs_download(dest = temp, meta = FALSE, states = 'Nunavut'),
+    "The following files already exist", all = FALSE
+  )
+
+  expect_true("Nunavut.zip" %in% list.files(temp_10))
+  expect_true("Fifty7.zip" %in% list.files(temp_50))
+
+  expect_error(bbs_download(bbs_dir = temp_sub, countries = 'denmark'))
+  expect_error(bbs_download(bbs_dir = temp_sub, states = 'denmark'))
+
+  unlink(temp)
 })
