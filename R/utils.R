@@ -152,12 +152,3 @@ bbs_files_10 <- function(bbs_dir = NULL) {
   return(tibble(state_name, ten_stop_file))
 }
 
-
-
-#' Convert all columns to integer
-#' @noRd
-integerize <- function(df, cols = names(df)) {
-  for(i in cols) { df[[i]] <- as.integer(df[[i]]) }
-  return(df)
-}
-

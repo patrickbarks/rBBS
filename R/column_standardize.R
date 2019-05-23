@@ -135,3 +135,10 @@ bbs_country <- function(z) {
 }
 
 
+#' Convert all columns to integer
+#' @noRd
+integerize <- function(df, cols = names(df)) {
+  for(i in cols) { df[[i]] <- as.integer(df[[i]]) }
+  return(df)
+}
+
