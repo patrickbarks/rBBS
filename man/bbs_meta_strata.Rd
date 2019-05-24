@@ -30,7 +30,7 @@ North American Breeding Bird Survey (BBS). This data comes from the BBS file
 strata <- bbs_meta_strata()
 
 # get from local working directory
-strata <- bbs_meta_strata(bbs_dir = '.')
+strata <- bbs_meta_strata(bbs_dir = ".")
 }
 }
 \references{

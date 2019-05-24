@@ -16,7 +16,7 @@ directory for the most recent BBS release. May alternatively be an FTP
 address for an older BBS release.}
 
 \item{countries}{Vector of countries to download 10- and/or 50-stop data for
-(e.g. \code{c('Canada', 'United States')}). Defaults to all available.
+(e.g. \code{c("Canada", "United States")}). Defaults to all available.
 Case-insensitive. See Details.}
 
 \item{states}{Vector of states/provinces/territories to download 10- and/or

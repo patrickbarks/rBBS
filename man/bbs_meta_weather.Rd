@@ -62,7 +62,7 @@ Breeding Bird Survey (BBS). This data comes from the BBS file
 weather <- bbs_meta_weather()
 
 # get from local working directory
-weather <- bbs_meta_weather(bbs_dir = '.')
+weather <- bbs_meta_weather(bbs_dir = ".")
 }
 }
 \references{

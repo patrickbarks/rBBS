@@ -54,9 +54,9 @@ bbs_route_unique <- function(df) {
   
   x <- as.integer(
     paste0(
-      formatC(df$country_num, width = 3, flag = '0'),
-      formatC(df$state_num, width = 2, flag = '0'),
-      formatC(df$route, width = 3, flag = '0')
+      formatC(df$country_num, width = 3, flag = "0"),
+      formatC(df$state_num, width = 2, flag = "0"),
+      formatC(df$route, width = 3, flag = "0")
     )
   )
   

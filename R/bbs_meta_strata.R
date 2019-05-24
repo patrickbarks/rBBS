@@ -29,7 +29,7 @@
 #' strata <- bbs_meta_strata()
 #' 
 #' # get from local working directory
-#' strata <- bbs_meta_strata(bbs_dir = '.')
+#' strata <- bbs_meta_strata(bbs_dir = ".")
 #' }
 #' @export bbs_meta_strata
 bbs_meta_strata <- function(bbs_dir = NULL) {
@@ -40,7 +40,7 @@ bbs_meta_strata <- function(bbs_dir = NULL) {
     bbs_dir <- bbs_ftp()
   }
   
-  out <- read_bbs_txt(paste(bbs_dir, "BBSStrata.txt", sep = '/'))
+  out <- read_bbs_txt(paste(bbs_dir, "BBSStrata.txt", sep = "/"))
   out <- bbs_standardize(out)
   
   return(out)

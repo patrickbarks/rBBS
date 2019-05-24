@@ -35,7 +35,7 @@ file \emph{SpeciesList.txt}.
 species <- bbs_meta_species()
 
 # get from local working directory
-species <- bbs_meta_species(bbs_dir = '.')
+species <- bbs_meta_species(bbs_dir = ".")
 }
 }
 \references{

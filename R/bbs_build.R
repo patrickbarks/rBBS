@@ -7,7 +7,7 @@ bbs_build <- function(bbs_dir, zeros = FALSE, countries = NULL,
   
   if ((!is.null(countries) | !is.null(states)) &
       (!is.null(bcr) | !is.null(strata))) {
-    stop('Cannot subset for both country/states AND bcr/strata')
+    stop("Cannot subset for both country/states AND bcr/strata")
   }
   
   type <- match.arg(type, c("10", "50"))
@@ -20,7 +20,7 @@ bbs_build <- function(bbs_dir, zeros = FALSE, countries = NULL,
   zip_files <- zip_files[grepl("\\.zip$", zip_files)]
   
   if (length(zip_files) == 0) {
-    stop(paste('No .zip files found within directory', zip_dir))
+    stop(paste("No .zip files found within directory", zip_dir))
   }
   
   # subset based on geography
@@ -90,7 +90,7 @@ bbs_build <- function(bbs_dir, zeros = FALSE, countries = NULL,
     zip_files <- unique(zip_use[[file_col]])
   }
   
-  zip_paths <- paste(bbs_dir, zip_dir, zip_files, sep = '/')
+  zip_paths <- paste(bbs_dir, zip_dir, zip_files, sep = "/")
   bbs_l <- lapply(zip_paths, csv_unzip)
   bbs <- do.call(rbind.data.frame, bbs_l)
   bbs <- bbs_standardize(bbs)

@@ -7,7 +7,7 @@
 #'   directory for the most recent BBS release. May alternatively be an FTP
 #'   address for an older BBS release.
 #' @param countries Vector of countries to download 10- and/or 50-stop data for
-#'   (e.g. \code{c('Canada', 'United States')}). Defaults to all available.
+#'   (e.g. \code{c("Canada", "United States")}). Defaults to all available.
 #'   Case-insensitive. See Details.
 #' @param states Vector of states/provinces/territories to download 10- and/or
 #'   50-stop data for. Defaults to all available. Case-insensitive. See Details.
@@ -70,8 +70,8 @@ bbs_download <- function(dest, bbs_dir = NULL, countries = NULL, states = NULL,
     
     if (!all(tolower(countries) %in% df_zip$country)) {
       countries_inv <- states[!tolower(countries) %in% df_zip$country]
-      stop(paste('The following countries could not be found:',
-                 paste(countries_inv, collapse = ', ')))
+      stop(paste("The following countries could not be found:",
+                 paste(countries_inv, collapse = ", ")))
     }
   }
   # check whether states argument valid
@@ -79,8 +79,8 @@ bbs_download <- function(dest, bbs_dir = NULL, countries = NULL, states = NULL,
     
     if (!all(tolower(states) %in% df_zip$state_name)) {
       states_inv <- states[!tolower(states) %in% df_zip$state_name]
-      stop(paste('The following states could not be found:',
-                 paste(states_inv, collapse = ', ')))
+      stop(paste("The following states could not be found:",
+                 paste(states_inv, collapse = ", ")))
     }
   }
   
@@ -93,8 +93,8 @@ bbs_download <- function(dest, bbs_dir = NULL, countries = NULL, states = NULL,
   if (meta == TRUE) {
     tl_files <- bbs_read_dir(bbs_dir)
     
-    bbs_download_util(bbs_dir, dest, subdir = '', dl_files = tl_files,
-                      file_type = 'metadata', overwrite = overwrite,
+    bbs_download_util(bbs_dir, dest, subdir = "", dl_files = tl_files,
+                      file_type = "metadata", overwrite = overwrite,
                       verbose = verbose)
   }
   
@@ -118,46 +118,46 @@ bbs_download <- function(dest, bbs_dir = NULL, countries = NULL, states = NULL,
     ## download 10-stop files (by state)
     if (ten_stop == TRUE) {
       
-      ts_dir <- 'States/'
+      ts_dir <- "States/"
       
-      if (!dir.exists(paste(dest, ts_dir, sep = '/'))) {
-        dir.create(paste(dest, ts_dir, sep = '/'))
+      if (!dir.exists(paste(dest, ts_dir, sep = "/"))) {
+        dir.create(paste(dest, ts_dir, sep = "/"))
       }
       
-      ts_files <- bbs_read_dir(paste(bbs_dir, ts_dir, sep = '/'))
+      ts_files <- bbs_read_dir(paste(bbs_dir, ts_dir, sep = "/"))
       
       if (!is.null(countries) | !is.null(states)) {
         ts_files <- ts_files[ts_files %in% zip_use$ten_stop_file]
       }
       
       bbs_download_util(bbs_dir, dest, subdir = ts_dir, dl_files = ts_files,
-                        file_type = '10-stop', overwrite = overwrite,
+                        file_type = "10-stop", overwrite = overwrite,
                         verbose = verbose)
     }
     
     ## download 50-stop files
     if (fifty_stop == TRUE) {
       
-      fs_dir1 <- '50-StopData'
-      fs_dir2 <- '1997ToPresent_SurveyWide/'
+      fs_dir1 <- "50-StopData"
+      fs_dir2 <- "1997ToPresent_SurveyWide/"
       fs_dir <- paste(fs_dir1, fs_dir2, sep = "/")
       
-      if (!dir.exists(paste(dest, fs_dir1, sep = '/'))) {
-        dir.create(paste(dest, fs_dir1, sep = '/'))
+      if (!dir.exists(paste(dest, fs_dir1, sep = "/"))) {
+        dir.create(paste(dest, fs_dir1, sep = "/"))
       }
       
-      if (!dir.exists(paste(dest, fs_dir1, fs_dir2, sep = '/'))) {
-        dir.create(paste(dest, fs_dir1, fs_dir2, sep = '/'))
+      if (!dir.exists(paste(dest, fs_dir1, fs_dir2, sep = "/"))) {
+        dir.create(paste(dest, fs_dir1, fs_dir2, sep = "/"))
       }
       
-      fs_files <- bbs_read_dir(paste(bbs_dir, fs_dir, sep = '/'))
+      fs_files <- bbs_read_dir(paste(bbs_dir, fs_dir, sep = "/"))
       
       if (!is.null(countries) | !is.null(states)) {
         fs_files <- fs_files[fs_files %in% zip_use$fifty_stop_file]
       }
       
       bbs_download_util(bbs_dir, dest, subdir = fs_dir, dl_files = fs_files,
-                        file_type = '50-stop', overwrite = overwrite,
+                        file_type = "50-stop", overwrite = overwrite,
                         verbose = verbose)
     }
   }

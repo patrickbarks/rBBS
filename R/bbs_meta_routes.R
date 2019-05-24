@@ -41,7 +41,7 @@
 #' routes <- bbs_meta_routes()
 #' 
 #' # get from local working directory
-#' routes <- bbs_meta_routes(bbs_dir = '.')
+#' routes <- bbs_meta_routes(bbs_dir = ".")
 #' }
 #' @export bbs_meta_routes
 bbs_meta_routes <- function(bbs_dir = NULL) {
@@ -50,7 +50,7 @@ bbs_meta_routes <- function(bbs_dir = NULL) {
     bbs_dir <- bbs_ftp()
   }
   
-  out <- csv_unzip(paste(bbs_dir, "routes.zip", sep = '/'))
+  out <- csv_unzip(paste(bbs_dir, "routes.zip", sep = "/"))
   out <- bbs_standardize(out)
   
   return(out)

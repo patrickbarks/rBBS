@@ -61,7 +61,7 @@
 #' weather <- bbs_meta_weather()
 #' 
 #' # get from local working directory
-#' weather <- bbs_meta_weather(bbs_dir = '.')
+#' weather <- bbs_meta_weather(bbs_dir = ".")
 #' }
 #' @export bbs_meta_weather
 bbs_meta_weather <- function(bbs_dir = NULL) {
@@ -70,7 +70,7 @@ bbs_meta_weather <- function(bbs_dir = NULL) {
     bbs_dir <- bbs_ftp()
   }
   
-  out <- csv_unzip(paste(bbs_dir, "Weather.zip", sep = '/'))
+  out <- csv_unzip(paste(bbs_dir, "Weather.zip", sep = "/"))
   out <- bbs_standardize(out)
   
   return(out)

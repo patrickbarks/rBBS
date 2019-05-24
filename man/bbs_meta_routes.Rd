@@ -42,7 +42,7 @@ further documentation.
 routes <- bbs_meta_routes()
 
 # get from local working directory
-routes <- bbs_meta_routes(bbs_dir = '.')
+routes <- bbs_meta_routes(bbs_dir = ".")
 }
 }
 \references{

@@ -30,7 +30,7 @@ American Breeding Bird Survey (BBS). This data comes from the BBS file
 bcr <- bbs_meta_bcr()
 
 # get from local working directory
-bcr <- bbs_meta_bcr(bbs_dir = '.')
+bcr <- bbs_meta_bcr(bbs_dir = ".")
 }
 }
 \references{

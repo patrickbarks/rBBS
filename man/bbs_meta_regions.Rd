@@ -43,7 +43,7 @@ Note that not all regions have a zip file. As of 2017 there is no
 regions <- bbs_meta_regions()
 
 # get from local working directory
-regions <- bbs_meta_regions(bbs_dir = '.')
+regions <- bbs_meta_regions(bbs_dir = ".")
 }
 }
 \references{

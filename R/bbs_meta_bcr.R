@@ -29,7 +29,7 @@
 #' bcr <- bbs_meta_bcr()
 #' 
 #' # get from local working directory
-#' bcr <- bbs_meta_bcr(bbs_dir = '.')
+#' bcr <- bbs_meta_bcr(bbs_dir = ".")
 #' }
 #' @export bbs_meta_bcr
 bbs_meta_bcr <- function(bbs_dir = NULL) {
