@@ -8,4 +8,5 @@ test_that("bbs_meta_strata works correctly", {
   expect_is(strata, "tbl_df")
   expect_is(strata$stratum, "integer")
   expect_is(strata$stratum_name, "character")
+  expect_is(strata$stratum_area, "integer")
 })

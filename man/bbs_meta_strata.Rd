@@ -17,11 +17,17 @@ A \code{data.frame} with the following columns:
   \item{stratum_name}{name of stratum in English}
   \item{stratum_name_french}{name of stratum in French}
   \item{stratum_name_spanish}{name of stratum in Spanish}
+  \item{stratum_area}{stratum area in square kilometers}
 }
 \description{
-Get a data frame with the names and codes of physiographic strata in the
-North American Breeding Bird Survey (BBS). This data comes from the BBS file
-\emph{BBSStrata.txt}.
+Get a data frame with the names, codes, and areas of physiographic strata in
+the North American Breeding Bird Survey (BBS). Names and codes come from the
+BBS file \emph{BBSStrata.txt}, and stratum areas are from
+\url{https://www.pwrc.usgs.gov/bbs/stratanames/index.html}.
+
+Note that stratum areas are stored within the \pkg{rBBS} package, so any
+potential changes to the USGS webpage noted above may not be immediately
+available from this function.
 }
 \examples{
 \dontrun{
