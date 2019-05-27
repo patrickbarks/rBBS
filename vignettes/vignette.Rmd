@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
   eval = FALSE
 )
 # knitr::opts_knit$set(
-#   root.dir = '~/bbs_data/'
+#   root.dir = "~/bbs_data/"
 # )
 ```
 
@@ -250,7 +250,7 @@ Tables with bird-count data are built using the `bbs_build_*` functions
 
 ```{r}
 # build 10-stop data for Canadian routes
-bbs_cdn <- bbs_build_10(bbs_dir = ".", countries = 'Canada')
+bbs_cdn <- bbs_build_10(bbs_dir = ".", countries = "Canada")
 ```
 
 We'll stick to the 10-stop data for the remainder of this vignette, but working
@@ -307,7 +307,7 @@ the contiguous United States. We can find its American Ornithological Union
 species code (aou) in the metadata table `species`.
 
 ```{r}
-species$aou[species$english_common_name == 'Western Meadowlark']
+species$aou[species$english_common_name == "Western Meadowlark"]
 #> [1] 5011
 ```
 
@@ -316,7 +316,7 @@ Meadowlark in the United States (including counts of zero this time).
 
 ```{r}
 wm <- bbs_build_10(bbs_dir = ".", zeros = TRUE,
-                   countries = 'United States', aou = 5011)
+                   countries = "United States", aou = 5011)
 ```
 
 There are different ways we could go about creating a distribution map. Let's
@@ -340,9 +340,9 @@ And finally, we'll plot the occurrence data on a map of the United States.
 states <- map_data("state") # get map of contiguous United States
 
 ggplot(states) + 
-  geom_polygon(aes(long, lat, group = group), fill = 'grey70', col = 'white') +
+  geom_polygon(aes(long, lat, group = group), fill = "grey70", col = "white") +
   geom_point(data = wm_occur, aes(longitude, latitude, col = occur), size = 2) +
-  scale_color_brewer(palette = 'Set1', name = 'Observed')
+  scale_color_brewer(palette = "Set1", name = "Observed")
 ```
 
 ![](fig2.png)
@@ -460,13 +460,13 @@ Next, let's use `iNEXT` to examine species accumulation curves for a few select
 provinces.
 
 ```{r, fig.width=7, fig.height=4}
-provs_inext <- iNEXT(freq_l[c('Alberta', 'Manitoba', 'Ontario')],
-                     datatype = 'incidence_freq', knot = 100, endpoint = 300)
+provs_inext <- iNEXT(freq_l[c("Alberta", "Manitoba", "Ontario")],
+                     datatype = "incidence_freq", knot = 100, endpoint = 300)
 
 ggiNEXT(provs_inext) +
   theme(text = element_text(size = 13),
-        legend.key.width = unit(0.9, 'cm'),
-        legend.spacing.y = unit(0, 'cm'),
+        legend.key.width = unit(0.9, "cm"),
+        legend.spacing.y = unit(0, "cm"),
         legend.position = c(0.85, 0.27),
         legend.background = element_blank())
 ```
@@ -485,7 +485,7 @@ decade. We'll start by finding its aou code using the `species` table, and then
 building a 10-stop table with Sedge Wren counts (including zeros).
 
 ```{r}
-species$aou[species$english_common_name == 'Sedge Wren']
+species$aou[species$english_common_name == "Sedge Wren"]
 #> [1] 7240
 
 bbs_sw <- bbs_build_10(".", aou = 7240, zeros = TRUE, years = 2005:2015)
@@ -641,7 +641,7 @@ Finally, let's examine geometric population trends by state.
 
 ```{r}
 ranef(mod)$state_name %>% 
-  rownames_to_column('state_name') %>% 
+  rownames_to_column("state_name") %>% 
   mutate(trend = 100 * (exp(grand_slope + year_center) - 1))
 #>      state_name (Intercept)  year_center      trend
 #> 1       Alberta -1.89907417 -0.001235859 -11.174283
