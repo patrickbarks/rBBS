@@ -14,6 +14,12 @@ test_that("bbs_build_10 works correctly", {
   dat_10s2 <- bbs_build_10(bbs_dir, states = 'Nunavut', aou = aou_sub)
   
   expect_warning(
+    bbs_build_10(bbs_dir, countries = "Canada")
+  )
+  expect_warning(
+    bbs_build_10(bbs_dir, bcr = 3)
+  )
+  expect_warning(
     dat_10s3 <- bbs_build_10(bbs_dir, strata = strata_sub)
   )
   expect_error(
