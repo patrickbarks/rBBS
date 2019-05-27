@@ -19,4 +19,10 @@ test_that("bbs_meta_regions works correctly", {
   expect_is(regions_zip$fifty_stop_file, "character")
   expect_true(all(grepl("\\.zip", zip10)))
   expect_true(all(grepl("\\.zip", zip50)))
+  
+  # read from ftp
+  regions2 <- bbs_meta_regions(zip_files = TRUE)
+  expect_is(regions2, "data.frame")
+  expect_is(regions2$ten_stop_file, "character")
+  expect_is(regions2$fifty_stop_file, "character")
 })
