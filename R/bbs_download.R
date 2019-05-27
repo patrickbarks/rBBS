@@ -56,9 +56,10 @@
 #' }
 #' 
 #' @export bbs_download
-bbs_download <- function(dest, bbs_dir = NULL, countries = NULL, states = NULL,
-                         meta = TRUE, ten_stop = TRUE, fifty_stop = FALSE,
-                         overwrite = FALSE, verbose = TRUE) {
+bbs_download <- function(dest, bbs_dir = bbs_ftp(), countries = NULL,
+                         states = NULL, meta = TRUE, ten_stop = TRUE,
+                         fifty_stop = FALSE, overwrite = FALSE,
+                         verbose = TRUE) {
   
   # check whether dest exists
   if (!dir.exists(dest)) {
@@ -82,11 +83,6 @@ bbs_download <- function(dest, bbs_dir = NULL, countries = NULL, states = NULL,
       stop(paste("The following states could not be found:",
                  paste(states_inv, collapse = ", ")))
     }
-  }
-  
-  # fetch bbs_dir
-  if (is.null(bbs_dir)) {
-    bbs_dir <- bbs_ftp()
   }
   
   ## download top-level metadata files

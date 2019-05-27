@@ -43,11 +43,7 @@
 #' }
 #' @importFrom  tibble add_column
 #' @export bbs_meta_regions
-bbs_meta_regions <- function(bbs_dir = NULL, zip_files = FALSE) {
-  
-  if (is.null(bbs_dir)) {
-    bbs_dir <- bbs_ftp()
-  }
+bbs_meta_regions <- function(bbs_dir = bbs_ftp(), zip_files = FALSE) {
   
   # read RegionCodes.txt
   regions <- read_bbs_txt(paste(bbs_dir, "RegionCodes.txt", sep = "/"))

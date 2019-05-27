@@ -32,11 +32,7 @@
 #' bcr <- bbs_meta_bcr(bbs_dir = ".")
 #' }
 #' @export bbs_meta_bcr
-bbs_meta_bcr <- function(bbs_dir = NULL) {
-
-  if (is.null(bbs_dir)) {
-    bbs_dir <- bbs_ftp()
-  }
+bbs_meta_bcr <- function(bbs_dir = bbs_ftp()) {
   
   out <- read_bbs_txt(paste(bbs_dir, "BCR.txt", sep = "/"))
   out <- bbs_standardize(out)

@@ -4,7 +4,7 @@
 \alias{bbs_meta_routes}
 \title{Get route metadata for North American Breeding Bird Survey}
 \usage{
-bbs_meta_routes(bbs_dir = NULL)
+bbs_meta_routes(bbs_dir = bbs_ftp())
 }
 \arguments{
 \item{bbs_dir}{Directory from which to get data. Defaults to the USGS FTP

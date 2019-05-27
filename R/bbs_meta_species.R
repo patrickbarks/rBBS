@@ -37,11 +37,7 @@
 #' species <- bbs_meta_species(bbs_dir = ".")
 #' }
 #' @export bbs_meta_species
-bbs_meta_species <- function(bbs_dir = NULL) {
-
-  if (is.null(bbs_dir)) {
-    bbs_dir <- bbs_ftp()
-  }
+bbs_meta_species <- function(bbs_dir = bbs_ftp()) {
   
   out <- read_bbs_txt(paste(bbs_dir, "SpeciesList.txt", sep = "/"))
   out <- bbs_standardize(out)

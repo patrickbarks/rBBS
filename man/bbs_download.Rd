@@ -4,8 +4,8 @@
 \alias{bbs_download}
 \title{Download North American Breeding Bird Survey data via FTP}
 \usage{
-bbs_download(dest, bbs_dir = NULL, countries = NULL, states = NULL,
-  meta = TRUE, ten_stop = TRUE, fifty_stop = FALSE,
+bbs_download(dest, bbs_dir = bbs_ftp(), countries = NULL,
+  states = NULL, meta = TRUE, ten_stop = TRUE, fifty_stop = FALSE,
   overwrite = FALSE, verbose = TRUE)
 }
 \arguments{

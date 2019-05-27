@@ -106,11 +106,7 @@ read_bbs_txt <- function(txt_file) {
 #' @importFrom tibble tibble
 #' @importFrom curl curl_download
 #' @noRd
-bbs_files_10 <- function(bbs_dir = NULL) {
-  
-  if (is.null(bbs_dir)) {
-    bbs_dir <- bbs_ftp()
-  }
+bbs_files_10 <- function(bbs_dir = bbs_ftp()) {
   
   # Read README.txt
   txt_file <- paste0(bbs_dir, "/README.txt")

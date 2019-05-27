@@ -4,7 +4,7 @@
 \alias{bbs_meta_regions}
 \title{Get state/province/territory metadata for North American Breeding Bird Survey}
 \usage{
-bbs_meta_regions(bbs_dir = NULL, zip_files = FALSE)
+bbs_meta_regions(bbs_dir = bbs_ftp(), zip_files = FALSE)
 }
 \arguments{
 \item{bbs_dir}{Directory from which to get data. Defaults to the USGS FTP
